@@ -1,5 +1,6 @@
 package ee364e.happs;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -10,14 +11,25 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private double longitude;
+    private double latitude;
+    private String result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        Intent intent = getIntent();
+        result = intent.getStringExtra("data");
+        longitude = intent.getDoubleExtra("long", -101);
+        latitude = intent.getDoubleExtra("lat", 123);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -37,10 +49,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
+        try {
+            JSONArray jObject = new JSONArray(result);
+            for(int i = 0 ; i < jObject.length(); i++) {
+                JSONObject object = jObject.getJSONObject(i);
+                Event event = new Event(object);
+                double latitude1 = event.getLongitude();
+                double longitude1 = event.getLatitude();
+                LatLng location = new LatLng(longitude1,latitude1);
+                mMap.addMarker(new MarkerOptions().position(location).title(event.getName()));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        LatLng here = new LatLng(latitude, longitude);
         LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.addMarker(new MarkerOptions().position(here).title("Marker on me~ :D"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 15));
     }
 }
