@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         setContentView(R.layout.activity_main);
     }
 
+    //this function is what executes when button is pressed
     public void toMaps(View view) {
         Intent intent = new Intent(this, MapsActivity.class);
         intent.putExtra("data", result);

@@ -2,4 +2,6 @@
     <string name="app_name">Happs</string>
     <string name="title_activity_maps">Map</string>
     <string name="facebook_app_id">1060343497420180</string>
+    <string name="title_activity_maps_activity_touch">Map</string>
+    <string name="title_activity_define_event">DefineEvent</string>
 </resources>
