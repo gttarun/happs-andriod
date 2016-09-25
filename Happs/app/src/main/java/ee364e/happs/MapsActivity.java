@@ -3,6 +3,8 @@ package ee364e.happs;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -21,6 +23,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private double longitude;
     private double latitude;
     private String result;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,4 +70,48 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(here).title("Marker on me~ :D"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 15));
     }
+
+    public void startCreateEventActivity(View view){
+        Intent intent = new Intent(this, DefineEvent.class);
+        intent.putExtra("long", longitude);
+        intent.putExtra("lat", latitude);
+        startActivity(intent);
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
