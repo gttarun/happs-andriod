@@ -44,6 +44,7 @@
         android:layout_height="wrap_content"
         android:text="Confirm"
         android:id="@+id/button"
+        android:onClick="submitEvent"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 

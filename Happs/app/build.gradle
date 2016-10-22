@@ -7,6 +7,7 @@ android {
         applicationId "ee364e.happs"
         minSdkVersion 19
         targetSdkVersion 24
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
