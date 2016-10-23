@@ -132,7 +132,9 @@ public class CameraActivity extends Activity {
                 }
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
-                conn.setRequestProperty("Content-Type","multipart/form-data boundary=" + boundary);
+                conn.setRequestProperty("ENCTYPE", "multipart/form-data");
+                conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+                conn.setRequestProperty("uploaded_file", finalFile.getName());
                 // Starts the query
                 try {
                     conn.connect();
@@ -153,11 +155,11 @@ public class CameraActivity extends Activity {
                     }
                     os.writeBytes(lineEnd);
                     os.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+                    int serverResponseCode = conn.getResponseCode();
+                    String serverResponseMessage = conn.getResponseMessage();
                     fileInputStream.close();
                     os.flush ();
                     os.close ();
-                    is = new DataInputStream( conn.getInputStream() );
-                    int response = conn.getResponseCode();
                     return "success";
                 } catch (IOException e) {
                     e.printStackTrace();
