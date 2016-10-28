@@ -71,6 +71,8 @@ public class CameraActivity extends Activity {
                     .setAspectRatio(1,1)
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .start(this);
+            //Uri result = data.getData();
+            //finalFile = new File(result.getPath());
         } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
@@ -141,7 +143,7 @@ public class CameraActivity extends Activity {
                     FileInputStream fileInputStream = new FileInputStream(finalFile);
                     DataOutputStream os = new DataOutputStream(conn.getOutputStream ());
                     os.writeBytes(twoHyphens + boundary + lineEnd);
-                    os.writeBytes("Content-Disposition: form-data; name=" +  "uploadedpicture"  + ";filename=" + finalFile.getName()  + lineEnd);
+                    os.writeBytes("Content-Disposition: form-data; name=" +  "datafile"  + ";filename=" + finalFile.getName()  + lineEnd);
                     os.writeBytes(lineEnd);
                     bytesAvailable = fileInputStream.available();
                     bufferSize = Math.min(bytesAvailable, maxBufferSize);
