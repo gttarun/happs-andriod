@@ -1,5 +1,6 @@
 package ee364e.happs;
 
+import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
@@ -9,6 +10,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -51,6 +53,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import static android.content.Intent.ACTION_VIEW;
+
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
@@ -58,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private double longitude;
     private double latitude;
     private String result;
+    Context context;
     private final String URL = "http://teamhapps.herokuapp.com/api/events/";
 
     @Override
@@ -73,24 +78,36 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     .addApi(Places.PLACE_DETECTION_API)
                     .addApi(AppIndex.API).build();
         }
+        context = getApplicationContext();
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_loading);
         new LongRunningGetIO().execute();
-        setContentView(R.layout.activity_main);
+
     }
 
     //this function is what executes when button is pressed
-    public void toMaps(View view) {
+    /*public void toMaps(View view) {
         Intent intent = new Intent(this, MapsActivity.class);
         intent.putExtra("data", result);
         intent.putExtra("long", longitude);
         intent.putExtra("lat", latitude);
         startActivity(intent);
-       new GetAddress().execute();
-    }
+       //new GetAddress().execute();
+    }*/
+
+    /*public void toList(View view) {
+        Intent intent = new Intent(this, EventLayout.class);
+        intent.putExtra("data", result);
+        intent.putExtra("long", longitude);
+        intent.putExtra("lat", latitude);
+        startActivity(intent);
+        //new GetAddress().execute();
+    }*/
 
     protected void onStart() {
         mGoogleApiClient.connect();
         super.onStart();
+        new LongRunningGetIO().execute();
     }
 
     protected void onStop() {
@@ -119,9 +136,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         return;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new LongRunningGetIO().execute();
+    }
 
 
-    // Given a URL, establishes an HttpUrlConnection and retrieves
+// Given a URL, establishes an HttpUrlConnection and retrieves
 // the web page content as a InputStream, which it returns as
 // a string.
 
@@ -209,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
 
         protected void onPostExecute(String results) {
-            if (results != null) {
+            /*if (results != null) {
                 result = results;
                 TextView textView = (TextView) findViewById(R.id.textView2);
                 textView.setText(result);
@@ -219,14 +241,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             Button b = (Button)findViewById(R.id.button2);
 
 
-            b.setClickable(true);
+            b.setClickable(true);*/
+            Intent intent = new Intent(context, EventLayout.class);
+            result = results;
+            intent.putExtra("data", result);
+            startActivity(intent);
         }
     }
 
 
 
 
-    private class GetAddress extends AsyncTask<Void, Void, String> {
+   /* private class GetAddress extends AsyncTask<Void, Void, String> {
 
         @Override
         protected String doInBackground(Void... params) {
@@ -275,7 +301,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
 
         }
-    }
+    }*/
 
 
 

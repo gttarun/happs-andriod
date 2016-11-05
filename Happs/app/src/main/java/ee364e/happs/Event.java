@@ -39,8 +39,11 @@ public class Event {
     private String time;
 
     public Event (JSONObject object) throws JSONException {
-        longitude = Double.parseDouble(object.getString("longitude"));
-        latitude = Double.parseDouble(object.getString("latitude"));
+        //longitude = Double.parseDouble(object.getString("longitude"));
+        //latitude = Double.parseDouble(object.getString("latitude"));
+        longitude = 54;
+        latitude = 62;
         name = object.getString("event_name");
+        time = object.getString("time");
     }
 }

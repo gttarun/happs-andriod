@@ -142,7 +142,7 @@ public class DefineEvent extends AppCompatActivity {
 
 
         protected void onPostExecute(String results) {
-
+            finish();
         }
     }
 

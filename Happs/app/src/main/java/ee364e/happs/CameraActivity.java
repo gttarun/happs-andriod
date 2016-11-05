@@ -2,13 +2,9 @@ package ee364e.happs;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,19 +12,13 @@ import android.widget.ImageView;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -88,7 +78,7 @@ public class CameraActivity extends Activity {
 
 
     private class LongRunningPostPicture extends AsyncTask<Void, Void, String> {
-        protected String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
+        protected String readIt(InputStream stream, int len) throws IOException {
             Reader reader = null;
             reader = new InputStreamReader(stream, "UTF-8");
             char[] buffer = new char[len];
