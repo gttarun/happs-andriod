@@ -1,16 +1,20 @@
 package ee364e.happs;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -24,15 +28,16 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-public class CameraActivity extends Activity {
+public class CameraActivity extends AppCompatActivity {
     private static final int CAMERA_REQUEST = 1888;
-    ImageView imageView,imageView2;
+    ImageView imageView;
     File finalFile;
     private final String URL = "http://teamhapps.herokuapp.com/api/images/";
-    private final String boundary = "xxxxx";
+    private final String boundary = "-------------xxxxx";
     Button crop;
     String lineEnd = "\r\n";
     String twoHyphens = "--";
+    Uri resultUri;
 
 
     @Override
@@ -40,7 +45,6 @@ public class CameraActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         imageView = (ImageView)this.findViewById(R.id.imageView1);
-        imageView2 = (ImageView)this.findViewById(R.id.imageView1);
         Button photoButton = (Button) this.findViewById(R.id.button1);
         crop=(Button)findViewById(R.id.button2);
         photoButton.setOnClickListener(new View.OnClickListener() {
@@ -51,7 +55,35 @@ public class CameraActivity extends Activity {
                 startActivityForResult(cameraIntent, CAMERA_REQUEST);
             }
         });
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, CAMERA_REQUEST);
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.camera_menu, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.next) {
+            Intent intent = new Intent(this, LocationActivity.class);
+            Event event = new Event();
+            event.setURI(resultUri);
+            EventBus.getDefault().postSticky(event);
+            startActivity(intent);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -66,7 +98,7 @@ public class CameraActivity extends Activity {
         } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
-                Uri resultUri = result.getUri();
+                resultUri = result.getUri();
                 finalFile = new File(resultUri.getPath());
                 imageView.setImageURI(resultUri);
                 new LongRunningPostPicture().execute();
@@ -124,16 +156,30 @@ public class CameraActivity extends Activity {
                 }
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
+                /*conn.setUseCaches(false);
+                conn.setChunkedStreamingMode(1024);*/
+                //conn.setRequestProperty("Accept", "application/json");
+                /*conn.setRequestProperty("Connection", "close");
+                conn.setRequestProperty("User-Agent", "Mozilla/5.0 ( compatible ) ");*/
                 conn.setRequestProperty("ENCTYPE", "multipart/form-data");
                 conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-                conn.setRequestProperty("uploaded_file", finalFile.getName());
+                //conn.setRequestProperty("uploaded_file", finalFile.getName());
                 // Starts the query
                 try {
                     conn.connect();
                     FileInputStream fileInputStream = new FileInputStream(finalFile);
                     DataOutputStream os = new DataOutputStream(conn.getOutputStream ());
+                    /*os.writeBytes(twoHyphens + boundary + lineEnd);
+                    os.writeBytes("Content-Disposition: form-data; name=\"" +  "username" + "\"" + lineEnd);
+                    os.writeBytes(lineEnd);
+                    os.writeBytes("g4555ttarun" + lineEnd);
+                    /*os.writeBytes(twoHyphens + boundary + lineEnd);
+                    os.writeBytes("Content-Disposition: form-data; name=" +  "\"save\"" + lineEnd);
+                    os.writeBytes(lineEnd);
+                    os.writeBytes("Save" + lineEnd);*/
                     os.writeBytes(twoHyphens + boundary + lineEnd);
-                    os.writeBytes("Content-Disposition: form-data; name=" +  "datafile"  + ";filename=" + finalFile.getName()  + lineEnd);
+                    os.writeBytes("Content-Disposition: form-data; name=\"" +  "datafile"  + "\";filename=\"" + finalFile.getName()  + "\"" + lineEnd);
+                    os.writeBytes("Content-Type: image/jpeg" + lineEnd);
                     os.writeBytes(lineEnd);
                     bytesAvailable = fileInputStream.available();
                     bufferSize = Math.min(bytesAvailable, maxBufferSize);

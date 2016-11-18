@@ -69,7 +69,7 @@ public class EventLayout extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.add) {
-            Intent intent = new Intent(this, DefineEvent.class);
+            Intent intent = new Intent(this, CameraActivity.class);
             startActivity(intent);
         }
 
