@@ -55,6 +55,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 );
 
+
                 userID = loginResult.getAccessToken().getUserId();
                 accessToken = loginResult.getAccessToken();
 
@@ -94,7 +95,10 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onError(FacebookException e) {
 
-                info.setText("Login attemtpt failed");
+                info.setText("Login attempt failed");
+                Intent intent = new Intent(null, MainActivity.class);
+                startActivity(intent);
+
             }
 
 
