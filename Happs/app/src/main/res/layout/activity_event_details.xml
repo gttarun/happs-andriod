@@ -1,35 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_event_details"
+    android:orientation="vertical"
+    android:padding="13dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ee364e.happs.EventDetailsActivity">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="@color/darktext"
+        android:text="@string/event_name"
+        />
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="EventName"
-        android:ems="10"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/editText6" />
+        android:text=""
+        android:id="@+id/eventName"
+         />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="@color/darktext"
+        android:text="@string/start_date"
+        />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="date"
+        android:focusable="false"
+        android:onClick="showStartDateDialog"
+        android:ems="10"
+        android:id="@+id/EventDate"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="@color/darktext"
+        android:text="@string/start_time"
+        />
+
+    <EditText
+        android:onClick="showStartTimeDialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="time"
+        android:ems="10"
+        android:focusable="false"
+        android:id="@+id/EventStartTime" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="@color/darktext"
+        android:text="@string/end_time"
+        />
+
+
+    <EditText
+        android:onClick="showEndTimeDialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="time"
+        android:ems="10"
+        android:focusable="false"
+        android:id="@+id/EventEndTime" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+        <Switch
+            android:textSize="20sp"
+            android:textColor="@color/darktext"
+            android:text="@string/private_string"
+            android:layout_weight=".5"
+            android:onClick="privateToggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/private_or_public" />
+
+        <Button
+            android:text="@string/invite_plus"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_weight=".5"
+            android:layout_marginLeft="15sp"
+            android:layout_marginRight="15sp"
+            android:background="@color/colorPrimary"
+
+            android:textColor="#FFF"
+            android:id="@+id/SendInvites" />
+
+
+
+    </LinearLayout>
+
+
+    <CheckBox
+        android:textSize="20sp"
+        android:padding="10dp"
+        android:textColor="@color/darktext"
+        android:text="@string/enable_invites"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/invites" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="@color/darktext"
+        android:text="@string/event_details"
+        />
+    <EditText
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
-        android:ems="10"
-        android:text="Details"
-        android:layout_marginTop="48dp"
-        android:id="@+id/editText8"
-        android:layout_below="@+id/editText6"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:id="@+id/event_details"
+        android:text=""
+         />
 
-</RelativeLayout>
+</LinearLayout>

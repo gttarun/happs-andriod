@@ -2,71 +2,58 @@ package ee364e.happs;
 
 import android.content.Context;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
+import android.content.pm.PackageManager;
 import android.location.Location;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
-
-import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.PlaceLikelihood;
-import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
 import com.google.android.gms.location.places.Places;
-
-
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import static android.content.Intent.ACTION_VIEW;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
+    private static final int REQUEST_LOCATION = 0;
+    private static final int REQUEST_INTERNET = 1;
     private double longitude;
     private double latitude;
     private String result;
     Context context;
+    private View mLayout;
     private final String URL = "http://teamhapps.herokuapp.com/api/events/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_loading);
+        mLayout = findViewById(R.id.loading);
+        /*if (ActivityCompat.checkSelfPermission(this, "android.permission.INTERNET")
+                != PackageManager.PERMISSION_GRANTED) {
+            // Camera permission has not been granted.
+            requestInternetPermission();
+        } else {
+            pullEvents();
+        }*/
         if (mGoogleApiClient == null) {
             // ATTENTION: This "addApi(AppIndex.API)"was auto-generated to implement the App Indexing API.
             // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -79,35 +66,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     .addApi(AppIndex.API).build();
         }
         context = getApplicationContext();
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_loading);
-        new LongRunningGetIO().execute();
-
+        ImageLoaderConfiguration config = ImageLoaderConfiguration.createDefault(this);
+        ImageLoader.getInstance().init(config);
     }
-
-    //this function is what executes when button is pressed
-    /*public void toMaps(View view) {
-        Intent intent = new Intent(this, MapsActivity.class);
-        intent.putExtra("data", result);
-        intent.putExtra("long", longitude);
-        intent.putExtra("lat", latitude);
-        startActivity(intent);
-       //new GetAddress().execute();
-    }*/
-
-    /*public void toList(View view) {
-        Intent intent = new Intent(this, EventLayout.class);
-        intent.putExtra("data", result);
-        intent.putExtra("long", longitude);
-        intent.putExtra("lat", latitude);
-        startActivity(intent);
-        //new GetAddress().execute();
-    }*/
 
     protected void onStart() {
         mGoogleApiClient.connect();
         super.onStart();
-        new LongRunningGetIO().execute();
     }
 
     protected void onStop() {
@@ -117,13 +82,126 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(Bundle connectionHint) {
+        if (ActivityCompat.checkSelfPermission(this, "android.permission.ACCESS_FINE_LOCATION")
+                != PackageManager.PERMISSION_GRANTED) {
+            // Camera permission has not been granted.
+
+            requestLocationPermission();
+
+        } else {
+
+            checkCurrentLocation();
+        }
+    }
+
+
+    public void checkCurrentLocation() {
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
         if (mLastLocation != null) {
             latitude =mLastLocation.getLatitude();
             longitude = mLastLocation.getLongitude();
         }
+        pullEvents();
     }
+
+    public void pullEvents() {
+        new LongRunningGetIO().execute();
+    }
+
+
+
+    private void requestLocationPermission() {
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                "android.permission.ACCESS_FINE_LOCATION")) {
+            // Provide an additional rationale to the user if the permission was not granted
+            // and the user would benefit from additional context for the use of the permission.
+            // For example if the user has previously denied the permission.
+
+            Snackbar.make(mLayout, R.string.permission_location_rationale,
+                    Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ActivityCompat.requestPermissions(MainActivity.this,
+                                    new String[]{"android.permission.ACCESS_FINE_LOCATION"},
+                                    REQUEST_LOCATION);
+                        }
+                    })
+                    .show();
+        } else {
+
+            // Camera permission has not been granted yet. Request it directly.
+            ActivityCompat.requestPermissions(this, new String[]{"android.permission.ACCESS_FINE_LOCATION"},
+                    REQUEST_LOCATION);
+        }
+        // END_INCLUDE(camera_permission_request)
+    }
+
+
+
+    private void requestInternetPermission() {
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                "android.permission.ACCESS_FINE_LOCATION")) {
+            // Provide an additional rationale to the user if the permission was not granted
+            // and the user would benefit from additional context for the use of the permission.
+            // For example if the user has previously denied the permission.
+
+            Snackbar.make(mLayout, R.string.permission_internet_rationale,
+                    Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ActivityCompat.requestPermissions(MainActivity.this,
+                                    new String[]{"android.permission.INTERNET"},
+                                    REQUEST_INTERNET);
+                        }
+                    })
+                    .show();
+        } else {
+
+            // Camera permission has not been granted yet. Request it directly.
+            ActivityCompat.requestPermissions(this, new String[]{"android.permission.INTERNET"},
+                    REQUEST_INTERNET);
+        }
+        // END_INCLUDE(camera_permission_request)
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION) {
+            // BEGIN_INCLUDE(permission_result)
+            // Received permission result for camera permission.
+            // Check if the only required permission has been granted
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                checkCurrentLocation();
+            } else {
+                finish();
+            }
+        } else if (requestCode == REQUEST_INTERNET) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                pullEvents();
+            } else {
+                finish();
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public void onConnectionSuspended(int i) {
@@ -139,7 +217,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     protected void onResume() {
         super.onResume();
-        new LongRunningGetIO().execute();
     }
 
 
@@ -152,11 +229,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
 
     private class LongRunningGetIO extends AsyncTask<Void, Void, String> {
-        protected String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
+        protected String readIt(InputStream stream, int len) throws IOException {
             Reader reader = null;
             reader = new InputStreamReader(stream, "UTF-8");
-           /* char[] buffer = new char[len];
-            reader.read(buffer);*/
             BufferedReader r = new BufferedReader(reader);
             StringBuilder total = new StringBuilder();
             String line;
@@ -231,77 +306,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
 
         protected void onPostExecute(String results) {
-            /*if (results != null) {
-                result = results;
-                TextView textView = (TextView) findViewById(R.id.textView2);
-                textView.setText(result);
-            }
-
-
-            Button b = (Button)findViewById(R.id.button2);
-
-
-            b.setClickable(true);*/
             Intent intent = new Intent(context, EventLayout.class);
             result = results;
             intent.putExtra("data", result);
+            intent.putExtra("longitude", longitude);
+            intent.putExtra("latitude", latitude);
             startActivity(intent);
+            finish();
         }
     }
 
 
 
 
-   /* private class GetAddress extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected String doInBackground(Void... params) {
-            Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-            List<Address> list = null;
-            String currentAddress = null;
-            try {
-                list = geocoder.getFromLocation(latitude, longitude, 1);
-                if(list != null && list.size() > 0) {
-                    Address address = list.get(0);
-                    // sending back first address line and locality
-                    currentAddress = address.getAddressLine(0) + ", " + address.getLocality();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            PendingResult<PlaceLikelihoodBuffer> result = Places.PlaceDetectionApi
-                    .getCurrentPlace(mGoogleApiClient, null);
-            result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>() {
-                @Override
-                public void onResult(PlaceLikelihoodBuffer likelyPlaces) {
-                    StringBuilder address = new StringBuilder();
-                    for (PlaceLikelihood placeLikelihood : likelyPlaces) {
-                                String place = placeLikelihood.getPlace().getName().toString();
-                                String place2 = placeLikelihood.getPlace().getAddress().toString();
-                                String like = Float.toString(placeLikelihood.getLikelihood());
-                        address.append(place + " " + like + " " + place2 +  "\n");
-                    }
-                    likelyPlaces.release();
-                    String result = address.toString();
-                    TextView textView = (TextView) findViewById(R.id.textView2);
-                    textView.setText(result);
-                }
-            });
-            return currentAddress;
-        }
 
 
-
-        protected void onPostExecute(String currentAddress) {
-            if (currentAddress != null) {
-                result = currentAddress;
-                TextView textView = (TextView) findViewById(R.id.textView);
-                textView.setText(result);
-            }
-
-
-        }
-    }*/
 
 
 

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="ee364e.happs.EventActivity">
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <LinearLayout
+        android:padding="10dp"
+        android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+        <TextView
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:padding="5dp"
+            android:textAlignment="center"
+            android:textColor="@color/darktext"
+            android:id="@+id/eventName"
+            />
+
+        <ImageView
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/eventImage" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:padding="5dp"
+            android:textColor="@color/darktext"
+            android:id="@+id/userName"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/darktext"
+            android:text="@string/location"
+            />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/placenameOverView"
+                android:textSize="18sp"
+                android:background="@drawable/border"
+                android:textColor="@color/regulartext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight=".3"
+                android:padding="5dp"
+                android:layout_margin="5dp"
+                />
+                 <Button
+                    android:layout_width="match_parent"
+                     android:text="Get directions"
+                     android:layout_weight=".7"
+                     android:textSize="10sp"
+                    android:layout_height="wrap_content" />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/addressOverView"
+            android:textSize="18sp"
+            android:background="@drawable/border"
+            android:textColor="@color/regulartext"
+            android:padding="5dp"
+            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/dateOverView"
+                android:textSize="18sp"
+                android:background="@drawable/border"
+                android:textColor="@color/regulartext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight=".5"
+                android:padding="5dp"
+                android:layout_margin="5dp"
+                />
+            <TextView
+                android:id="@+id/privateOverView"
+                android:padding="5dp"
+                android:layout_margin="5dp"
+                android:textSize="18sp"
+                android:background="@drawable/border"
+                android:textColor="@color/regulartext"
+                android:layout_width="wrap_content"
+                android:layout_weight=".5"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/darktext"
+            android:text="@string/start_time"
+            />
+
+        <TextView
+            android:padding="5dp"
+            android:layout_margin="5dp"
+            android:id="@+id/startTimeOverView"
+            android:textSize="18sp"
+            android:background="@drawable/border"
+            android:textColor="@color/regulartext"
+            android:layout_width="match_parent"
+            android:layout_weight=".5"
+            android:layout_height="wrap_content" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/darktext"
+            android:text="@string/end_time"
+            />
+
+        <TextView
+
+            android:padding="5dp"
+            android:layout_margin="5dp"
+            android:id="@+id/endTimeOverView"
+            android:textSize="18sp"
+            android:background="@drawable/border"
+            android:textColor="@color/regulartext"
+            android:layout_width="match_parent"
+            android:layout_weight=".5"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/darktext"
+            android:text="@string/event_details"
+            />
+        <TextView
+            android:id="@+id/detailsOverView"
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/border"
+            android:textColor="@color/regulartext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight=".5"
+                android:layout_margin="5dp"
+                android:textColor="#FFF"
+                android:background="@color/colorPrimary"
+                android:text="@string/event_chat"
+                />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight=".5"
+                android:layout_margin="5dp"
+                android:text="@string/attendees"
+                android:background="@color/regulartext"
+                android:textColor="#FFF"
+                />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight=".5"
+                android:layout_margin="5dp"
+                android:text="@string/invite_plus"
+                android:background="#ca79ff"
+                android:textColor="#FFF"
+                />
+        </LinearLayout>
+        <Button
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/darktext"
+            android:textColor="#FFF"
+            android:text="@string/attend"
+            />
+
+    </LinearLayout>
+</ScrollView>
+   <!-- <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@android:drawable/ic_menu_add" />
+-->
+
+</android.support.design.widget.CoordinatorLayout>

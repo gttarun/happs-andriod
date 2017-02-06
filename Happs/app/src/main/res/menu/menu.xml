@@ -2,15 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
     <item
-        android:id="@+id/maps"
-        android:icon="@drawable/happs"
-        android:title="maps"
+        android:id="@+id/refresh"
+        android:icon="@drawable/refresh2"
+        android:title="refresh"
         app:showAsAction="always"
         android:orderInCategory="0"/>
+
     <item
         android:id="@+id/add"
-        android:title="add"
+        android:title="+"
         app:showAsAction="always"
         android:orderInCategory="0"/>
 
