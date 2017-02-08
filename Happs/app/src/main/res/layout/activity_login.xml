@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,28 +10,34 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ee364e.happs.LoginActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World"
-        android:id="@+id/info"
-        android:layout_alignParentTop="true"
+    <ImageView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        app:srcCompat="@drawable/happs"
         android:layout_centerHorizontal="true"
+        android:id="@+id/imageView3"
+        android:scaleType="fitXY"
         />
+
+
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"
+        android:layout_marginTop="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_below="@id/imageView3"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
     <Button
+        android:text="Log in with Google"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Skip Login"
-        android:id="@+id/button4"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="onClickSkipLogin"/>
+        android:layout_below="@+id/login_button"
+        android:layout_marginTop="25dp"
+        android:id="@+id/button5"
+        android:layout_alignStart="@+id/login_button"
+        android:layout_alignEnd="@+id/login_button" />
+
 </RelativeLayout>

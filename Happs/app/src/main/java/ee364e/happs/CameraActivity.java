@@ -1,9 +1,11 @@
 package ee364e.happs;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,34 +18,27 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
+
+import id.zelory.compressor.Compressor;
 
 public class CameraActivity extends AppCompatActivity {
+    private static final int CAMERA_PERMISSION = 0;
     private static final int CAMERA_REQUEST = 1888;
     ImageView imageView;
     File finalFile;
-    private final String URL = "http://teamhapps.herokuapp.com/api/images/";
-    private final String boundary = "-------------xxxxx";
     Button crop;
-    String lineEnd = "\r\n";
-    String twoHyphens = "--";
     Uri resultUri;
+    private double longitude;
+    private double latitude;
+    private View mLayout;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+        mLayout = findViewById(R.id.camera);
         imageView = (ImageView)this.findViewById(R.id.imageView1);
         Button photoButton = (Button) this.findViewById(R.id.button1);
         crop=(Button)findViewById(R.id.button2);
@@ -55,9 +50,70 @@ public class CameraActivity extends AppCompatActivity {
                 startActivityForResult(cameraIntent, CAMERA_REQUEST);
             }
         });
+        Intent intent = getIntent();
+        longitude = intent.getDoubleExtra("long", -101);
+        latitude = intent.getDoubleExtra("lat", 123);
+        if (ActivityCompat.checkSelfPermission(this, "android.permission.CAMERA")
+                != PackageManager.PERMISSION_GRANTED) {
+            // Camera permission has not been granted.
+            requestCameraPermission();
+        } else {
+            cameraOpen();
+        }
+    }
+
+
+    void cameraOpen() {
         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraIntent, CAMERA_REQUEST);
     }
+
+    private void requestCameraPermission() {
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                "android.permission.CAMERA")) {
+            // Provide an additional rationale to the user if the permission was not granted
+            // and the user would benefit from additional context for the use of the permission.
+            // For example if the user has previously denied the permission.
+
+            Snackbar.make(mLayout, R.string.permission_camera_rationale,
+                    Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ActivityCompat.requestPermissions(CameraActivity.this,
+                                    new String[]{"android.permission.CAMERA"},
+                                    CAMERA_PERMISSION);
+                        }
+                    })
+                    .show();
+        } else {
+
+            // Camera permission has not been granted yet. Request it directly.
+            ActivityCompat.requestPermissions(this, new String[]{"android.permission.CAMERA"},
+                    CAMERA_PERMISSION);
+        }
+        // END_INCLUDE(camera_permission_request)
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        if (requestCode == CAMERA_PERMISSION) {
+            // BEGIN_INCLUDE(permission_result)
+            // Received permission result for camera permission.
+            // Check if the only required permission has been granted
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                cameraOpen();
+            } else {
+                finish();
+            }
+        }
+    }
+
+
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -79,6 +135,8 @@ public class CameraActivity extends AppCompatActivity {
             Intent intent = new Intent(this, LocationActivity.class);
             Event event = new Event();
             event.setURI(resultUri);
+            event.setLatitude(latitude);
+            event.setLongitude(longitude);
             EventBus.getDefault().postSticky(event);
             startActivity(intent);
         }
@@ -93,140 +151,21 @@ public class CameraActivity extends AppCompatActivity {
                     .setAspectRatio(1,1)
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .start(this);
-            //Uri result = data.getData();
-            //finalFile = new File(result.getPath());
         } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 resultUri = result.getUri();
                 finalFile = new File(resultUri.getPath());
+                finalFile = Compressor.getDefault(this).compressToFile(finalFile);
+                resultUri = Uri.fromFile(finalFile);
                 imageView.setImageURI(resultUri);
-                new LongRunningPostPicture().execute();
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
+        } else if (resultCode == 0) {
+            finish();
         }
     }
 
-
-    private class LongRunningPostPicture extends AsyncTask<Void, Void, String> {
-        protected String readIt(InputStream stream, int len) throws IOException {
-            Reader reader = null;
-            reader = new InputStreamReader(stream, "UTF-8");
-            char[] buffer = new char[len];
-            reader.read(buffer);
-            return new String(buffer);
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            int bytesRead, bytesAvailable, bufferSize;
-            byte[] buffer;
-            int maxBufferSize = 1*1024*1024;
-            InputStream is = null;
-            // Only display the first 500 characters of the retrieved
-            // web page content.
-            int len = 500;
-            try {
-                URL url = null;
-                try {
-                    url = new URL(URL);
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
-
-
-                HttpURLConnection conn = null;
-                try {
-                    conn = (HttpURLConnection) url.openConnection();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
-                conn.setReadTimeout(10000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
-
-
-                try {
-                    conn.setRequestMethod("POST");
-                    conn.setRequestProperty("Connection", "Keep-Alive");
-                } catch (ProtocolException e) {
-                    e.printStackTrace();
-                }
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-                /*conn.setUseCaches(false);
-                conn.setChunkedStreamingMode(1024);*/
-                //conn.setRequestProperty("Accept", "application/json");
-                /*conn.setRequestProperty("Connection", "close");
-                conn.setRequestProperty("User-Agent", "Mozilla/5.0 ( compatible ) ");*/
-                conn.setRequestProperty("ENCTYPE", "multipart/form-data");
-                conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-                //conn.setRequestProperty("uploaded_file", finalFile.getName());
-                // Starts the query
-                try {
-                    conn.connect();
-                    FileInputStream fileInputStream = new FileInputStream(finalFile);
-                    DataOutputStream os = new DataOutputStream(conn.getOutputStream ());
-                    /*os.writeBytes(twoHyphens + boundary + lineEnd);
-                    os.writeBytes("Content-Disposition: form-data; name=\"" +  "username" + "\"" + lineEnd);
-                    os.writeBytes(lineEnd);
-                    os.writeBytes("g4555ttarun" + lineEnd);
-                    /*os.writeBytes(twoHyphens + boundary + lineEnd);
-                    os.writeBytes("Content-Disposition: form-data; name=" +  "\"save\"" + lineEnd);
-                    os.writeBytes(lineEnd);
-                    os.writeBytes("Save" + lineEnd);*/
-                    os.writeBytes(twoHyphens + boundary + lineEnd);
-                    os.writeBytes("Content-Disposition: form-data; name=\"" +  "datafile"  + "\";filename=\"" + finalFile.getName()  + "\"" + lineEnd);
-                    os.writeBytes("Content-Type: image/jpeg" + lineEnd);
-                    os.writeBytes(lineEnd);
-                    bytesAvailable = fileInputStream.available();
-                    bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                    buffer = new byte[bufferSize];
-                    bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-                    while (bytesRead > 0){
-                        os.write(buffer, 0, bufferSize);
-                        bytesAvailable = fileInputStream.available();
-                        bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                        bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-                    }
-                    os.writeBytes(lineEnd);
-                    os.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-                    int serverResponseCode = conn.getResponseCode();
-                    String serverResponseMessage = conn.getResponseMessage();
-                    fileInputStream.close();
-                    os.flush ();
-                    os.close ();
-                    return "success";
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                // Convert the InputStream into a string
-
-
-                return "retrieval failed";
-
-                // Makes sure that the InputStream is closed after the app is
-                // finished using it.
-            } finally {
-                if (is != null) {
-                    try {
-                        String contentAsString = readIt(is, len);
-                        is.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-
-
-
-        protected void onPostExecute(String results) {
-
-        }
-    }
 
 }

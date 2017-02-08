@@ -4,6 +4,31 @@
     <string name="title_activity_maps_activity_touch">Map</string>
     <string name="title_activity_define_event">DefineEvent</string>
     <string name="take_picture">Take picture</string>
+    <string name="permission_location_rationale">We need your location in order to display events relevant to you.</string>
+    <string name="permission_camera_rationale">We need your camera in order to create events.</string>
+
+    <string name="permission_internet_rationale">We need to use the internet to get your events. This app will not work without this permission.</string>
+    <string name="ok">OK</string>
+
     <string name="facebook_app_id">385707474886362</string>
     <string name="google_places_key">AIzaSyA8ZOy_1m_e3cPJf9CRYdAfQEbLN2HVaco</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="search_location">Search event location</string>
+    <string name="suggested_location">Location suggestions</string>
+    <string name="event_location">Event location</string>
+    <string name="location">Location</string>
+    <string name="event_name">Event name</string>
+    <string name="event_details">Event details</string>
+    <string name="start_time">Start time</string>
+    <string name="start_date">Event date</string>
+    <string name="end_time">End time</string>
+    <string name="private_string">Private</string>
+    <string name="public_string">Public</string>
+    <string name="enable_invites">Enable invites</string>
+    <string name="invite_plus">Invite +</string>
+    <string name="create">Create</string>
+    <string name="title_activity_event">EventActivity</string>
+    <string name="event_chat">Event Chat</string>
+    <string name="attendees">Attendees</string>
+    <string name="attend">Attend</string>
 </resources>

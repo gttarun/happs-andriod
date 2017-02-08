@@ -1,6 +1,7 @@
 <RelativeLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android" >
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
@@ -11,24 +12,13 @@
     android:layout_height="match_parent"
     tools:context="ee364e.happs.MapsActivity" />
 
-    <Button
-        android:id="@+id/createEventButton"
-        android:layout_height="wrap_content"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab2"
         android:layout_width="wrap_content"
-        android:onClick="startCreateEventActivity"
-        android:text="Create Event"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        app:srcCompat="@android:drawable/ic_menu_sort_by_size"
+        android:layout_margin="@dimen/fab_margin"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/editText"
-        android:layout_above="@+id/createEventButton"
-        android:layout_alignEnd="@+id/createEventButton"
-        android:layout_alignStart="@+id/createEventButton"
-        android:background="#7874f7"
-        android:autoText="false" />
-
-
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
