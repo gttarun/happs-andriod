@@ -31,4 +31,6 @@
     <string name="event_chat">Event Chat</string>
     <string name="attendees">Attendees</string>
     <string name="attend">Attend</string>
+    <string name="title_activity_friends_list">FriendsListActivity</string>
+    <string name="title_activity_profile_view">ProfileViewActivity</string>
 </resources>

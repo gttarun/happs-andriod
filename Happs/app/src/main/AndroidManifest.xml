@@ -33,7 +33,6 @@
             </intent-filter>
         </activity>
 
-
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -74,11 +73,17 @@
         <activity android:name=".LocationActivity" />
         <activity android:name=".EventDetailsActivity" />
         <activity android:name=".OverviewActivity" />
-        <activity  android:name=".EventActivity">
-
-
-        </activity>
->>>>>>> ffd2f4a8d3d60db4169abd5a2b81eb6b92b7cd24
+        <activity android:name=".EventActivity" />
+        >>>>>>> ffd2f4a8d3d60db4169abd5a2b81eb6b92b7cd24
+        <activity android:name=".CreateProfile" />
+        <activity
+            android:name=".FriendsListActivity"
+            android:label="@string/title_activity_friends_list"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ProfileViewActivity"
+            android:label="@string/title_activity_profile_view"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
