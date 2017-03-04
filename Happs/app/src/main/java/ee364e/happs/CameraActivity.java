@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,6 +54,8 @@ public class CameraActivity extends AppCompatActivity {
         Intent intent = getIntent();
         longitude = intent.getDoubleExtra("long", -101);
         latitude = intent.getDoubleExtra("lat", 123);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
         if (ActivityCompat.checkSelfPermission(this, "android.permission.CAMERA")
                 != PackageManager.PERMISSION_GRANTED) {
             // Camera permission has not been granted.
@@ -140,9 +143,15 @@ public class CameraActivity extends AppCompatActivity {
             EventBus.getDefault().postSticky(event);
             startActivity(intent);
         }
-
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
+    }
+
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
@@ -151,7 +160,9 @@ public class CameraActivity extends AppCompatActivity {
                     .setAspectRatio(1,1)
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .start(this);
-        } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+        } else if (resultCode == 0) {
+            finish();
+        }  else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 resultUri = result.getUri();
@@ -162,8 +173,6 @@ public class CameraActivity extends AppCompatActivity {
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
-        } else if (resultCode == 0) {
-            finish();
         }
     }
 

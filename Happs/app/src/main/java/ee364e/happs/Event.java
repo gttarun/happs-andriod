@@ -5,8 +5,6 @@ import org.json.JSONObject;
 
 import android.net.Uri;
 
-import com.google.android.gms.location.places.Place;
-
 /**
  * Created by cykim on 2016-09-19.
  */
@@ -131,7 +129,7 @@ public class Event {
     private String address;
     private String placeName;
     private String details;
-    private MyPlace place;
+    private MyGooglePlaces place;
     private int startYear;
     private int startMonth;
     private int startDay;
@@ -171,7 +169,7 @@ public class Event {
 
     public void setInvites(boolean bool) {invites = bool;}
 
-    public void setPlace(MyPlace place) {
+    public void setPlace(MyGooglePlaces place) {
         this.place = place;
         this.longitude = place.getLongitude();
         this.latitude = place.getLatitude();

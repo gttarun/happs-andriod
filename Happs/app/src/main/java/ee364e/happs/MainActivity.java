@@ -16,8 +16,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -66,8 +64,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     .addApi(AppIndex.API).build();
         }
         context = getApplicationContext();
-        ImageLoaderConfiguration config = ImageLoaderConfiguration.createDefault(this);
-        ImageLoader.getInstance().init(config);
     }
 
     protected void onStart() {
@@ -306,7 +302,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
 
         protected void onPostExecute(String results) {
-            Intent intent = new Intent(context, EventLayout.class);
+            Intent intent = new Intent(context, EventLayoutActivity.class);
             result = results;
             intent.putExtra("data", result);
             intent.putExtra("longitude", longitude);

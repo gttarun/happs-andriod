@@ -6,7 +6,7 @@ import com.google.android.gms.location.places.Place;
  * Created by Young on 2016-11-19.
  */
 
-public class MyPlace {
+public class MyGooglePlaces {
 
     String name = null;
     String address = null;
@@ -15,7 +15,7 @@ public class MyPlace {
     boolean selected = false;
     Place googlePlace;
 
-    public MyPlace(Place place) {
+    public MyGooglePlaces(Place place) {
         super();
         googlePlace = place;
         this.name = place.getName().toString();

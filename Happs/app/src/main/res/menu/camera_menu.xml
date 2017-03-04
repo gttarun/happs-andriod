@@ -3,8 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:title="next"
         android:id="@+id/next"
-        android:title=">>"
+        android:icon="@drawable/ic_arrow_forward_white_24dp"
         app:showAsAction="always"
         android:orderInCategory="1"/>
 </menu>

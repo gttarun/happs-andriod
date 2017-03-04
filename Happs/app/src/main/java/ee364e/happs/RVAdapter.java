@@ -1,7 +1,6 @@
 package ee364e.happs;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,15 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
+import com.bumptech.glide.Glide;
+
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 
 /**
@@ -26,7 +24,7 @@ import java.util.List;
 
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.EventViewHolder>  {
 
-    ImageLoader imageLoader = ImageLoader.getInstance();
+
     EventViewHolder pvh;
     View v;
 
@@ -55,10 +53,13 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.EventViewHolder>  
 
     List<Event> events;
     private final OnItemClickListener listener;
+    Context context;
 
-    RVAdapter(List<Event> events, OnItemClickListener listener){
+
+    RVAdapter(List<Event> events, OnItemClickListener listener, Context context){
         this.events = events;
         this.listener = listener;
+        this.context = context;
     }
 
     @Override
@@ -75,10 +76,11 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.EventViewHolder>  
 
     @Override
     public void onBindViewHolder(EventViewHolder eventViewHolder, int i) {
+        URI uri = null;
         String URL = "http://teamhapps.herokuapp.com/static/images/" + events.get(i).getName() + events.get(i).getId() + ".jpg";
         eventViewHolder.eventName.setText(events.get(i).getName());
         eventViewHolder.eventUsername.setText("created by " + events.get(i).getUsername());
-        imageLoader.displayImage("https://pbs.twimg.com/profile_images/447374371917922304/P4BzupWu.jpeg", eventViewHolder.eventPhoto);
+        Glide.with(context).load("https://pbs.twimg.com/profile_images/447374371917922304/P4BzupWu.jpeg").centerCrop().placeholder(R.drawable.happs).crossFade().into(eventViewHolder.eventPhoto);
         eventViewHolder.bind(events.get(i) , listener);
     }
     @Override

@@ -6,7 +6,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
-import android.provider.MediaStore;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,9 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -30,7 +28,6 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceLikelihood;
 import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
@@ -51,7 +48,7 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
     Context context;
     private double longitude;
     private double latitude;
-    ArrayList<MyPlace> placesResult;
+    ArrayList<MyGooglePlaces> placesResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,10 +64,11 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
                     .addApi(AppIndex.API).build();
         }
         context = getApplicationContext();
-        placesResult = new ArrayList<MyPlace>();
-
+        placesResult = new ArrayList<MyGooglePlaces>();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
         event = EventBus.getDefault().removeStickyEvent(Event.class);
@@ -80,7 +78,7 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
                 chosenLocation.setText(place.getName());
-                event.setPlace(new MyPlace(place));
+                event.setPlace(new MyGooglePlaces(place));
             }
 
             @Override
@@ -91,6 +89,13 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
         new GetAddress().execute();
     }
 
+
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        onBackPressed();
+        return true;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -185,7 +190,7 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
                 @Override
                 public void onResult(PlaceLikelihoodBuffer likelyPlaces) {
                     for(int i = 0; i < 5 || i > likelyPlaces.getCount() ; i++) {
-                        placesResult.add(new MyPlace(likelyPlaces.get(i).getPlace()));
+                        placesResult.add(new MyGooglePlaces(likelyPlaces.get(i).getPlace()));
                     }
                     MyCustomAdapter dataAdapter = new MyCustomAdapter(context,
                             R.layout.place_info, placesResult);
@@ -200,17 +205,17 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
     }
 
 
-    private class MyCustomAdapter extends ArrayAdapter<MyPlace> {
+    private class MyCustomAdapter extends ArrayAdapter<MyGooglePlaces> {
 
-        private ArrayList<MyPlace> placeList;
+        private ArrayList<MyGooglePlaces> placeList;
         private RadioButton mSelectedRB;
         private int mSelectedPosition = -1;
 
 
         public MyCustomAdapter(Context context, int textViewResourceId,
-                               ArrayList<MyPlace> placeList) {
+                               ArrayList<MyGooglePlaces> placeList) {
             super(context, textViewResourceId, placeList);
-            this.placeList = new ArrayList<MyPlace>();
+            this.placeList = new ArrayList<MyGooglePlaces>();
             this.placeList.addAll(placeList);
         }
 
@@ -241,7 +246,7 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
 
                         mSelectedPosition = position;
                         mSelectedRB = (RadioButton)v;
-                        MyPlace place = placeList.get(position);
+                        MyGooglePlaces place = placeList.get(position);
                         chosenLocation.setText(place.getName());
                         event.setPlace(place);
                     }
@@ -264,7 +269,7 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
             }
 
 
-            MyPlace place = placeList.get(position);
+            MyGooglePlaces place = placeList.get(position);
             holder.name.setText(place.getName());
             return convertView;
 

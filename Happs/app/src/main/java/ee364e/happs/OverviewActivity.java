@@ -2,6 +2,7 @@ package ee364e.happs;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -24,7 +25,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.Date;
 
 public class OverviewActivity extends AppCompatActivity {
     TextView name;
@@ -49,6 +49,8 @@ public class OverviewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overview);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
         name = (TextView) findViewById(R.id.nameOverView);
         placeName = (TextView) findViewById(R.id.placenameOverView);
         address = (TextView) findViewById(R.id.addressOverView);
@@ -101,7 +103,6 @@ public class OverviewActivity extends AppCompatActivity {
         }
         endTime.setText(Integer.toString(showHour) + " : " +Integer.toString(event.getEndMinute()) + " " + time);
         finalFile = new File(event.getURI().getPath());
-
     }
 
 
@@ -112,11 +113,18 @@ public class OverviewActivity extends AppCompatActivity {
 
     public void EventSubmit(View view) {
         new LongRunningPostIO().execute();
-        Intent intent = new Intent(getApplicationContext(), EventLayout.class);
+        Intent intent = new Intent(getApplicationContext(), EventLayoutActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish();
+    }
+
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        onBackPressed();
+        return true;
     }
 
 
