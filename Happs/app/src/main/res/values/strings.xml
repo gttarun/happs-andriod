@@ -31,6 +31,7 @@
     <string name="event_chat">Event Chat</string>
     <string name="attendees">Attendees</string>
     <string name="attend">Attend</string>
+
     <string name="title_activity_side_menu">SideMenu</string>
     <string name="details">details&#8230;</string>
 
@@ -118,4 +119,7 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="title_activity_friends_list">FriendsListActivity</string>
+    <string name="title_activity_profile_view">ProfileViewActivity</string>
+
 </resources>

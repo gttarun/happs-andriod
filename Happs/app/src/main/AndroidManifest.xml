@@ -24,6 +24,7 @@
         android:minSdkVersion="8"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <service android:name=".MyFirebaseInstanceIdService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
@@ -121,7 +122,17 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait"
-            ></activity>
+            />
+
+        <activity android:name=".CreateProfile" />
+        <activity
+            android:name=".FriendsListActivity"
+            android:label="@string/title_activity_friends_list"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <Activity
+            android:name=".ProfileViewActivity"
+            android:label="@string/title_activity_profile_view"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
