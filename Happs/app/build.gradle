@@ -36,6 +36,7 @@ dependencies {
     compile 'id.zelory:compressor:1.0.4'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.theartofdev.edmodo:android-image-cropper:2.3.+'
+    compile 'com.koushikdutta.ion:ion:2.+'
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.android.support:design:24.2.1'

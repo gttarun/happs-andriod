@@ -3,7 +3,6 @@ package ee364e.happs;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -29,21 +28,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
 
 import org.greenrobot.eventbus.EventBus;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener,
@@ -114,7 +106,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private GoogleMap mMap;
     Location mLastLocation;
-    private String result;
+    private final String URL = "http://teamhapps.herokuapp.com/api/events/";
+    private JsonArray result;
     private GoogleApiClient mGoogleApiClient;
     ArrayList<Event> events;
     Context context;
@@ -135,7 +128,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setSupportActionBar(toolbar);
         context = this;
         Intent intent = getIntent();
-        result = intent.getStringExtra("data");
+         result = EventBus.getDefault().removeStickyEvent(JsonArray.class);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -214,9 +207,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setPadding(0,200,0,230);
         mMap.setMyLocationEnabled(true);
         try {
-            JSONArray jObject = new JSONArray(result);
-            for(int i = 0 ; i < jObject.length(); i++) {
-                JSONObject object = jObject.getJSONObject(i);
+            for(int i = 0 ; i < result.size(); i++) {
+                JsonElement object = result.get(i);
                 Event event = new Event(object);
                 events.add(event);
                 double latitude1 = event.getLongitude();
@@ -290,8 +282,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void refresh() {
         updateLocation();
-        new MapsActivity.LongRunningGetIO().execute();
-
+        Ion.with(context)
+                .load(URL)
+                .asJsonArray()
+                .setCallback(new FutureCallback<JsonArray>() {
+                    @Override
+                    public void onCompleted(Exception e, JsonArray results) {
+                        mMap.clear();
+                        for(int i = 0 ; i < result.size(); i++) {
+                            JsonElement object = result.get(i);
+                            try {
+                                Event event = new Event(object);
+                                events.add(event);
+                                double latitude1 = event.getLongitude();
+                                double longitude1 = event.getLatitude();
+                                LatLng location = new LatLng(longitude1,latitude1);
+                                mMap.addMarker(new MarkerOptions().position(location).title(String.valueOf(event.getId())));
+                            } catch (JSONException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                    }
+                });
     }
 
 
@@ -301,113 +313,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mGoogleApiClient);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 15));
     }
-
-    private class LongRunningGetIO extends AsyncTask<Void, Void, String> {
-
-        private final String URL = "http://teamhapps.herokuapp.com/api/events/";
-
-        protected String readIt(InputStream stream, int len) throws IOException {
-            Reader reader = null;
-            reader = new InputStreamReader(stream, "UTF-8");
-            BufferedReader r = new BufferedReader(reader);
-            StringBuilder total = new StringBuilder();
-            String line;
-            while ((line = r.readLine()) != null) {
-                total.append(line);
-            }
-            return total.toString();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            InputStream is = null;
-            // Only display the first 500 characters of the retrieved
-            // web page content.
-            int len = 10000;
-
-            try {
-                java.net.URL url = null;
-                try {
-                    url = new URL(URL);
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
-
-
-                HttpURLConnection conn = null;
-                try {
-                    conn = (HttpURLConnection) url.openConnection();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
-                conn.setReadTimeout(10000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
-
-                try {
-                    conn.setRequestMethod("GET");
-                } catch (ProtocolException e) {
-                    e.printStackTrace();
-                }
-                conn.setDoInput(true);
-                // Starts the query
-                try {
-                    conn.connect();
-                    int response = conn.getResponseCode();
-                    is = conn.getInputStream();
-                    String contentAsString = readIt(is, len);
-                    return contentAsString;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                // Convert the InputStream into a string
-
-
-
-                return "retrieval failed";
-
-                // Makes sure that the InputStream is closed after the app is
-                // finished using it.
-            } finally {
-                if (is != null) {
-                    try {
-                        is.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-
-
-        protected void onPostExecute(String results) {
-            events = new ArrayList<Event>();
-            result =results;
-            try {
-                JSONArray jObject = new JSONArray(result);
-                for(int i = 0 ; i < jObject.length(); i++) {
-                    JSONObject object = jObject.getJSONObject(i);
-                    Event event = new Event(object);
-                    events.add(event);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            mMap.clear();
-            for(Event event: events) {
-                double latitude1 = event.getLongitude();
-                double longitude1 = event.getLatitude();
-                LatLng location = new LatLng(longitude1,latitude1);
-                mMap.addMarker(new MarkerOptions().position(location).title(String.valueOf(event.getId())));
-            }
-        }
-    }
-
-
-
-
 }
 
 

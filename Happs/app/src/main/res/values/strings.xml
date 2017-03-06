@@ -8,6 +8,8 @@
     <string name="permission_camera_rationale">We need your camera in order to create events.</string>
 
     <string name="permission_internet_rationale">We need to use the internet to get your events. This app will not work without this permission.</string>
+    <string name="permission_external_rationale">We need permission to save the pictures you take with this app onto your phone. This app will not work without this permission.</string>
+
     <string name="ok">OK</string>
 
     <string name="facebook_app_id">385707474886362</string>

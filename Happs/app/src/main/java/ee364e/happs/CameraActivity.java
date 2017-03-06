@@ -2,10 +2,15 @@ package ee364e.happs;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -20,16 +25,21 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import id.zelory.compressor.Compressor;
 
+
 public class CameraActivity extends AppCompatActivity {
     private static final int CAMERA_PERMISSION = 0;
-    private static final int CAMERA_REQUEST = 1888;
+    private static final int CAMERA_REQUEST = 1;
+    String mCurrentPhotoPath;
     ImageView imageView;
     File finalFile;
     Button crop;
     Uri resultUri;
+    Uri file;
     private double longitude;
     private double latitude;
     private View mLayout;
@@ -67,8 +77,15 @@ public class CameraActivity extends AppCompatActivity {
 
 
     void cameraOpen() {
-        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, CAMERA_REQUEST);
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            file = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", getOutputMediaFile());
+        } else {
+            file = Uri.fromFile(getOutputMediaFile());
+        }
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, file);
+        startActivityForResult(intent, CAMERA_REQUEST);
     }
 
     private void requestCameraPermission() {
@@ -155,7 +172,13 @@ public class CameraActivity extends AppCompatActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
-            CropImage.activity(data.getData())
+            MediaScannerConnection.scanFile(this,
+                    new String[]{file.getPath()}, null,
+                    new MediaScannerConnection.OnScanCompletedListener() {
+                        public void onScanCompleted (String path, Uri uri ) {
+                        }
+                    });
+            CropImage.activity(file)
                     .setFixAspectRatio(true)
                     .setAspectRatio(1,1)
                     .setGuidelines(CropImageView.Guidelines.ON)
@@ -174,6 +197,22 @@ public class CameraActivity extends AppCompatActivity {
                 Exception error = result.getError();
             }
         }
+    }
+
+    private  File getOutputMediaFile(){
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Happs");
+        if (!mediaStorageDir.exists()){
+            if (!mediaStorageDir.mkdirs()){
+                return null;
+            }
+        }
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+        File image =  new File(mediaStorageDir.getPath() + File.separator +
+                "IMG_"+ timeStamp + ".jpg");
+        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        return image;
     }
 
 

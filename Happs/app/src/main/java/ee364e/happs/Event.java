@@ -5,6 +5,9 @@ import org.json.JSONObject;
 
 import android.net.Uri;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 /**
  * Created by cykim on 2016-09-19.
  */
@@ -129,6 +132,7 @@ public class Event {
     private String address;
     private String placeName;
     private String details;
+    private String cover;
     private MyGooglePlaces place;
     private int startYear;
     private int startMonth;
@@ -148,10 +152,25 @@ public class Event {
         id = object.getInt("id");
         longitude = Double.parseDouble(object.getString("longitude"));
         latitude = Double.parseDouble(object.getString("latitude"));
-        name = object.getString("event_name");
+        name = object.getString("name");
         time = object.getString("time");
-        username = object.getString("username");
+        username = object.getString("user");
+        cover = object.getString("datafile");
     }
+
+    public Event (JsonElement object) throws JSONException {
+        try {
+            JsonObject event = object.getAsJsonObject();
+            id = event.get("id").getAsInt();
+            longitude = event.get("longitude").getAsDouble();
+            latitude = event.get("longitude").getAsDouble();
+            name = event.get("name").getAsString();
+            time = event.get("time").getAsString();
+            username = event.get("user").getAsString();
+        } catch (UnsupportedOperationException exception) {
+        }
+    }
+
 
     public void setDate(int year, int month, int day, int hour, int minute, int hour2, int minute2) {
         startYear = year;

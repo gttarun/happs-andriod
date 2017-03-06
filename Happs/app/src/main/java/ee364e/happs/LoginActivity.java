@@ -18,7 +18,6 @@ import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.wearable.internal.StorageInfoResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;

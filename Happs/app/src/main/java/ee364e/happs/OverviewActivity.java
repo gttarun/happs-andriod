@@ -1,7 +1,7 @@
 package ee364e.happs;
 
+import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,22 +9,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.greenrobot.eventbus.EventBus;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
 
-import java.io.DataOutputStream;
+import org.greenrobot.eventbus.EventBus;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 
 public class OverviewActivity extends AppCompatActivity {
     TextView name;
@@ -38,6 +28,7 @@ public class OverviewActivity extends AppCompatActivity {
     TextView privateOrPublic;
     TextView invitesEnabled;
     Event event;
+    Context context;
     int id = -1;
 
 
@@ -61,6 +52,7 @@ public class OverviewActivity extends AppCompatActivity {
         startDate = (TextView) findViewById(R.id.dateOverView);
         privateOrPublic = (TextView) findViewById(R.id.privateOverView);
         invitesEnabled = (TextView) findViewById(R.id.invitesEnableOverView);
+        context = this;
         event = EventBus.getDefault().removeStickyEvent(Event.class);
 
         String names = event.getName();
@@ -112,12 +104,28 @@ public class OverviewActivity extends AppCompatActivity {
 
 
     public void EventSubmit(View view) {
-        new LongRunningPostIO().execute();
-        Intent intent = new Intent(getApplicationContext(), EventLayoutActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intent);
-        finish();
+        String URL = "http://teamhapps.herokuapp.com/api/events/";
+        Ion.with(context)
+                .load("POST", URL)
+                    .setMultipartParameter("name", event.getName())
+                    .setMultipartParameter("longitude", String.valueOf(event.getLongitude()))
+                    .setMultipartParameter("latitude", String.valueOf(event.getLatitude()))
+                    .setMultipartParameter("time", "2016-09-19T18:30:00")
+                    .setMultipartParameter("user", "http://teamhapps.herokuapp.com/api/users/Santi/")
+                    .setMultipartFile("datafile", "image/jpeg", finalFile)
+                    .asJsonObject()
+                    .setCallback(new FutureCallback< JsonObject>() {
+
+                    @Override
+                    public void onCompleted(Exception e, JsonObject result) {
+                        JsonObject result2 = result;
+                        Intent intent = new Intent(getApplicationContext(), EventLayoutActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
     }
 
 
@@ -126,253 +134,5 @@ public class OverviewActivity extends AppCompatActivity {
         onBackPressed();
         return true;
     }
-
-
-    private class LongRunningPostIO extends AsyncTask<Void, Void, String> {
-        private final String URL = "http://teamhapps.herokuapp.com/api/events/";
-        String time = "2016-09-19T18:30:00Z";
-
-
-        protected String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
-            Reader reader = null;
-            reader = new InputStreamReader(stream, "UTF-8");
-            char[] buffer = new char[len];
-            reader.read(buffer);
-            return new String(buffer);
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            // Only display the first 500 characters of the retrieved
-            // web page content.
-            int len = 500;
-            InputStream is = null;
-
-            try {
-                URL url = null;
-                try {
-                    url = new URL(URL);
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
-
-
-                HttpURLConnection conn = null;
-                try {
-                    conn = (HttpURLConnection) url.openConnection();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
-                conn.setReadTimeout(10000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
-
-
-                try {
-                    conn.setRequestMethod("POST");
-                } catch (ProtocolException e) {
-                    e.printStackTrace();
-                }
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-                conn.setRequestProperty("Content-Type","application/json");
-                // Starts the query
-                try {
-                    conn.connect();
-                    JSONObject jsonParam = new JSONObject();
-                    try {
-                        jsonParam.put("event_name", event.getName());
-                        jsonParam.put("time", "2016-06-29T09:57:00Z");
-                        jsonParam.put("longitude", event.getLongitude());
-                        jsonParam.put("latitude", event.getLatitude());
-                        jsonParam.put("username", "young");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    DataOutputStream os = new DataOutputStream(conn.getOutputStream ());
-                    os.writeBytes(jsonParam.toString());
-                    os.flush ();
-                    os.close ();
-                    is = conn.getInputStream();
-                    int response = conn.getResponseCode();
-                    String message = conn.getResponseMessage();
-                    String input=  readIt(is, len);
-                    try {
-                        JSONObject success = new JSONObject(input);
-                        id = Integer.valueOf(success.getString("id"));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    return "success";
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                // Convert the InputStream into a string
-
-
-                return "retrieval failed";
-
-                // Makes sure that the InputStream is closed after the app is
-                // finished using it.
-            } finally {
-                if (is != null) {
-                    try {
-                        is.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-
-
-
-        protected void onPostExecute(String results) {
-            new LongRunningPostPicture().execute();
-        }
-    }
-
-
-
-
-
-
-
-
-
-    private class LongRunningPostPicture extends AsyncTask<Void, Void, String> {
-
-        private final String URL = "http://teamhapps.herokuapp.com/api/images/";
-        private final String boundary = "-------------xxxxx";
-        String lineEnd = "\r\n";
-        String twoHyphens = "--";
-
-        protected String readIt(InputStream stream, int len) throws IOException {
-            Reader reader = null;
-            reader = new InputStreamReader(stream, "UTF-8");
-            char[] buffer = new char[len];
-            reader.read(buffer);
-            return new String(buffer);
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            int bytesRead, bytesAvailable, bufferSize;
-            byte[] buffer;
-            int maxBufferSize = 1*1024*1024;
-            InputStream is = null;
-            // Only display the first 500 characters of the retrieved
-            // web page content.
-            int len = 500;
-            try {
-                java.net.URL url = null;
-                try {
-                    url = new URL(URL);
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
-
-
-                HttpURLConnection conn = null;
-                try {
-                    conn = (HttpURLConnection) url.openConnection();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
-                conn.setReadTimeout(10000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
-
-
-                try {
-                    conn.setRequestMethod("POST");
-                    conn.setRequestProperty("Connection", "Keep-Alive");
-                } catch (ProtocolException e) {
-                    e.printStackTrace();
-                }
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-                conn.setRequestProperty("ENCTYPE", "multipart/form-data");
-                conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-                conn.setRequestProperty("uploaded_file", event.getName() + id);
-                try {
-                    conn.connect();
-                    FileInputStream fileInputStream = new FileInputStream(finalFile);
-                    DataOutputStream os = new DataOutputStream(conn.getOutputStream ());
-                    os.writeBytes(twoHyphens + boundary + lineEnd);
-                    os.writeBytes("Content-Disposition: form-data; name=\"" +  "username" + "\"" + lineEnd);
-                    os.writeBytes(lineEnd);
-                    os.writeBytes("young" + lineEnd);
-                    os.writeBytes(twoHyphens + boundary + lineEnd);
-                    os.writeBytes("Content-Disposition: form-data; name=\"" +  "event" + "\"" + lineEnd);
-                    os.writeBytes(lineEnd);
-                    os.writeBytes("http://teamhapps.herokuapp.com/api/events/" + id +"/" + lineEnd);
-                    os.writeBytes(twoHyphens + boundary + lineEnd);
-                    os.writeBytes("Content-Disposition: form-data; name=" +  "datafile"  + ";filename=" + event.getName() + id  + ".jpg" +  lineEnd);
-                    os.writeBytes("Content-Type: image/jpeg" + lineEnd);
-                    os.writeBytes(lineEnd);
-                    bytesAvailable = fileInputStream.available();
-                    bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                    buffer = new byte[bufferSize];
-                    bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-                    while (bytesRead > 0){
-                        os.write(buffer, 0, bufferSize);
-                        bytesAvailable = fileInputStream.available();
-                        bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                        bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-                    }
-                    os.writeBytes(lineEnd);
-                    os.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-                    int serverResponseCode = conn.getResponseCode();
-                    String serverResponseMessage = conn.getResponseMessage();
-                    fileInputStream.close();
-                    os.flush ();
-                    os.close ();
-                    return "success";
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                // Convert the InputStream into a string
-
-
-                return "retrieval failed";
-
-                // Makes sure that the InputStream is closed after the app is
-                // finished using it.
-            } finally {
-                if (is != null) {
-                    try {
-                        String contentAsString = readIt(is, len);
-                        is.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-        protected void onPostExecute(String results) {
-
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
