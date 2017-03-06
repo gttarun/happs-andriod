@@ -33,19 +33,19 @@ import java.util.ArrayList;
  * created by Chan-Young Kim
  *
  * Note for Ali:
- * Implement the attend button
- * implement the picture changing on swipe (see below)
- * implement invite people (use popUpAttendees as a reference)
- * Actually make use of the Login Activity (currently, not being used. Probably make the login the
- * opening screen and then move onto MainActivity
- * Use preferences (google android preferences) to store user data.
- * user data should include :
- * username
- * name
- * profile picture
- * login
- * password
- */
+ * Implement the attend button -- todo: waiting for back end
+ * implement the picture changing on swipe (see below)todo: waiting for backend
+ * implement invite people (use popUpAttendees as a reference) -- not doing anymore (as of now)
+ * Actually make use of the Login Activity (currently, not being used. Probably make the login the --- done!
+    * opening screen and then move onto MainActivity
+ * Use preferences (shared preferences)(google android preferences) to store user data.
+     * user data should include :
+         * username
+         * name
+         * profile picture (image uri)
+         * login (status true or false) -- i dont think we need this
+         * password
+ ***/
 
 public class EventActivity extends AppCompatActivity  {
 

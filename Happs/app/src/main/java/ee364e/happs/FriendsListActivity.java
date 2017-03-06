@@ -11,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 
 public class FriendsListActivity extends AppCompatActivity {
@@ -24,6 +26,8 @@ public class FriendsListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_list);
 
+
+        //replace following code to pull friends list from server
         mFriends = new ArrayList<Profile>();
         for (int i = 0; i < 10; i++){
             Profile p = new Profile();
@@ -39,11 +43,14 @@ public class FriendsListActivity extends AppCompatActivity {
         mAdapter = new FriendsListRVAdapter(mFriends, new FriendsListRVAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Profile profile) {
-                //Intent intent = new Intent(this, /* Profile view class*/);
-                Toast.makeText(getApplicationContext(),"you have clicked " + profile.getName(),Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), FriendProfileViewActivity.class);
+                EventBus.getDefault().postSticky(profile);
+                startActivity(intent);
+                //Toast.makeText(getApplicationContext(),"you have clicked " + profile.getName(),Toast.LENGTH_SHORT).show();
 
             }
         });
+        mRecyclerView.setAdapter(mAdapter);
     }
 
 }

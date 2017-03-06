@@ -10,11 +10,11 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="ee364e.happs.ProfileViewActivity"
+    tools:context="ee364e.happs.FriendProfileViewActivity"
     tools:showIn="@layout/activity_profile_view">
 
     <TextView
-        android:text="First Last Name"
+        android:text="User Name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/Name"
@@ -27,9 +27,9 @@
 
 
     <ImageView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/cat"
+        app:srcCompat="@drawable/com_facebook_profile_picture_blank_square"
         android:id="@+id/profilePic"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
@@ -38,7 +38,7 @@
         android:layout_centerInParent="true" />
 
     <TextView
-        android:text="status"
+        android:text="Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/status"

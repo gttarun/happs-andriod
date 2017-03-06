@@ -14,23 +14,22 @@
     <ImageView
         android:layout_width="match_parent"
         app:srcCompat="@drawable/com_facebook_profile_picture_blank_square"
-        android:layout_centerHorizontal="true"
         android:id="@+id/imageView4"
-        android:adjustViewBounds="true"
         android:layout_alignParentTop="true"
         android:layout_height="wrap_content"
-        android:onClick="onClickTakePic"/>
+        android:onClick="onClickTakePic"
+        android:cropToPadding="false"
+        android:adjustViewBounds="false" />
 
 
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:ems="10"
         android:id="@+id/editText4"
         android:hint="Name"
-        android:paddingBottom="1dp"
-        android:paddingTop="1dp"
+        android:layout_marginBottom="1dp"
+        android:layout_marginTop="1dp"
         android:layout_below="@+id/imageView4"
         android:layout_alignParentStart="true" />
 
@@ -40,10 +39,18 @@
         android:inputType="textPersonName"
         android:ems="10"
         android:id="@+id/editText5"
-        android:paddingBottom="1dp"
-        android:paddingTop="1dp"
         android:hint="User Name"
         android:layout_below="@+id/editText4"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/editText6"
+        android:hint="Description"
+        android:layout_below="@+id/editText5"
         android:layout_alignParentStart="true" />
 
     <Button
@@ -64,21 +71,8 @@
         android:paddingLeft="1dp"
         android:paddingRight="1dp"
         android:paddingStart="1dp"
-        android:layout_below="@+id/editText5"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="41dp" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/editText6"
-        android:hint="Description"
-        android:paddingBottom="1dp"
-        android:paddingTop="1dp"
-        android:layout_below="@+id/editText5"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>

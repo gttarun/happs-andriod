@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.net.wifi.ScanResult;
 
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 
 /**
  * Created by Ali on 2/13/2017.
@@ -16,9 +17,29 @@ public class Profile {
     private String name;
     private String userName;
     private String description;
+    private String userID;
+    private String authToken;
     private ArrayList<String> friends;
     private ArrayList<Event> events;
     private Uri profilePic;
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
+
+
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
 
     public ArrayList<Event> getEvents() {return events;}
 

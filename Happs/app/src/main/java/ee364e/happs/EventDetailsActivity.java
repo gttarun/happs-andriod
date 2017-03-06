@@ -125,26 +125,6 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
      public class StartDatePicker extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
         @Override

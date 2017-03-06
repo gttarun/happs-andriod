@@ -1,5 +1,6 @@
 package ee364e.happs;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ public class FriendsListRVAdapter extends RecyclerView.Adapter<FriendsListRVAdap
     FriendsListViewHolder flvh;
 
     public static class FriendsListViewHolder extends RecyclerView.ViewHolder{
+        CardView cv;
         TextView mName;
         TextView mUserName;
         ImageView mProfilePic;
@@ -63,7 +65,7 @@ public class FriendsListRVAdapter extends RecyclerView.Adapter<FriendsListRVAdap
         String URL;
         friendsListViewHolder.mName.setText(profiles.get(i).getName());
         friendsListViewHolder.mUserName.setText(profiles.get(i).getUserName());
-        friendsListViewHolder.mProfilePic.setImageResource(R.drawable.cat);
+        friendsListViewHolder.mProfilePic.setImageResource(R.drawable.happs);
         friendsListViewHolder.bind(profiles.get(i), listener);
 
     }

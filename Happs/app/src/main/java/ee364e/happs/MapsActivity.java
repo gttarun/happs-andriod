@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
@@ -173,6 +174,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (id == R.id.nav_manage) {
             Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        }
+
+        else if (id == R.id.nav_friends){
+            //Toast.makeText(getApplicationContext(), "you pressed friends", Toast.LENGTH_SHORT).show();
+           Intent intent = new Intent(this, FriendsListActivity.class);
+            startActivity(intent);
+        }
+
+        else if (id == R.id.nav_profile){
+            Intent intent = new Intent(this, MainUserProfileActivity.class);
             startActivity(intent);
         }
 

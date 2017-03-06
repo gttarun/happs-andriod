@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -110,6 +111,17 @@ public class EventLayoutActivity extends AppCompatActivity implements Navigation
         int id = item.getItemId();
          if (id == R.id.nav_manage) {
              Intent intent = new Intent(this, SettingsActivity.class);
+             startActivity(intent);
+         }
+
+         else if (id == R.id.nav_friends){
+            // Toast.makeText(getApplicationContext(), "you pressed friends", Toast.LENGTH_SHORT).show();
+             Intent intent = new Intent(this, FriendsListActivity.class);
+             startActivity(intent);
+         }
+
+         else if (id == R.id.nav_profile){
+             Intent intent = new Intent(this, MainUserProfileActivity.class);
              startActivity(intent);
          }
 

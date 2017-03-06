@@ -34,6 +34,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/path" />
             </provider>
+
         <service android:name=".MyFirebaseInstanceIdService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
@@ -47,14 +48,8 @@
 
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"
-            >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <!--
@@ -76,9 +71,8 @@
             android:name=".MapsActivity"
             android:label="Events"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"
-            />
+            android:theme="@style/AppTheme.NoActionBar" />
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -87,15 +81,22 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".CameraActivity"
+        <activity
+            android:name=".CameraActivity"
             android:label="Event Photo"
-            android:screenOrientation="portrait"
-            />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"
-            />
+            android:theme="@style/AppTheme.NoActionBar" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" />
@@ -104,44 +105,47 @@
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
             android:name=".EventLayoutActivity"
-            android:launchMode="singleTask"
             android:label="Events"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            />
-        <activity android:name=".LocationActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".LocationActivity"
             android:label="Event Location"
-            android:screenOrientation="portrait"
-            />
-        <activity android:name=".EventDetailsActivity"
+            android:screenOrientation="portrait" />
+
+
+        <activity
+            android:name=".EventDetailsActivity"
             android:label="Event Details"
-            android:screenOrientation="portrait"
-            />
-        <activity android:name=".OverviewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".OverviewActivity"
             android:label="Event Overview"
-            android:screenOrientation="portrait"
-            />
-        <activity android:name=".EventActivity"
-            android:screenOrientation="portrait"
-            />
-        <activity android:name=".FirebaseChat"
-            android:screenOrientation="portrait"
-            />
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".EventActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".FirebaseChat"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:screenOrientation="portrait"
-            />
-
+            android:screenOrientation="portrait" />
         <activity android:name=".CreateProfile" />
         <activity
             android:name=".FriendsListActivity"
             android:label="@string/title_activity_friends_list"
             android:theme="@style/AppTheme.NoActionBar" />
-        <Activity
-            android:name=".ProfileViewActivity"
+
+        <activity
+            android:name=".FriendProfileViewActivity"
             android:label="@string/title_activity_profile_view"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".MainUserProfileActivity"></activity>
     </application>
 
 </manifest>
