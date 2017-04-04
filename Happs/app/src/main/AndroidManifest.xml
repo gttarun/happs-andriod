@@ -50,6 +50,12 @@
             android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
         </activity>
 
         <!--
@@ -62,7 +68,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_places_key" />
+            android:value="AIzaSyBl49nem15FqgbkV1pxjqaM9LRBFdPIw7Y" />
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -90,11 +96,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" >
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
 
         </activity>
         <activity
@@ -134,16 +135,15 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait" />
-        <activity android:name=".CreateProfile" />
+        <activity android:name=".CreateProfile" >
+        </activity>
         <activity
             android:name=".FriendsListActivity"
-            android:label="@string/title_activity_friends_list"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="@string/title_activity_friends_list" />
 
         <activity
             android:name=".FriendProfileViewActivity"
-            android:label="@string/title_activity_profile_view"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="@string/title_activity_profile_view" />
 
         <activity android:name=".MainUserProfileActivity"></activity>
     </application>

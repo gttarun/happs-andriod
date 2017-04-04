@@ -79,6 +79,8 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
                 // TODO: Get info about the selected place.
                 chosenLocation.setText(place.getName());
                 event.setPlace(new MyGooglePlaces(place));
+                event.setLatitude(place.getLatLng().latitude);
+                event.setLongitude(place.getLatLng().longitude);
             }
 
             @Override
@@ -189,6 +191,7 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
             result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>() {
                 @Override
                 public void onResult(PlaceLikelihoodBuffer likelyPlaces) {
+                    if(likelyPlaces.getStatus().isSuccess())
                     for(int i = 0; i < 5 || i > likelyPlaces.getCount() ; i++) {
                         placesResult.add(new MyGooglePlaces(likelyPlaces.get(i).getPlace()));
                     }

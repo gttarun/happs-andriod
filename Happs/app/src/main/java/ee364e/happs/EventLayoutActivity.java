@@ -2,6 +2,8 @@ package ee364e.happs;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,10 +17,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.facebook.login.LoginManager;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
@@ -30,36 +36,23 @@ import java.util.List;
 
 public class EventLayoutActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private final String URL = "http://teamhapps.herokuapp.com/api/events/";
+    private final String URL = "https://uthapps-backend.herokuapp.com/api/events/";
     List<Event> events = new ArrayList<Event>();
     JsonArray result;
-    private double longitude;
-    private double latitude;
     Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String username = preferences.getString("username", "");
         super.onCreate(savedInstanceState);
         final EventLayoutActivity eventlayout = this;
         context = this;
-        Intent intent = getIntent();
-        result = EventBus.getDefault().removeStickyEvent(JsonArray.class);
-        longitude = intent.getDoubleExtra("longitude", -101);
-        latitude = intent.getDoubleExtra("latitude", 123);
-        try {
-            for(int i = 0 ; i < result.size(); i++) {
-                JsonElement object = result.get(i);
-                Event event = new Event(object);
-                events.add(event);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         setContentView(R.layout.activity_event_layout);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         LinearLayoutManager lim = new LinearLayoutManager(getApplicationContext());
-        RecyclerView rv = (RecyclerView)findViewById(R.id.rv);
+        RecyclerView rv = (RecyclerView) findViewById(R.id.rv);
         rv.setLayoutManager(lim);
         rv.setHasFixedSize(true);
         rv.setNestedScrollingEnabled(false);
@@ -91,7 +84,23 @@ public class EventLayoutActivity extends AppCompatActivity implements Navigation
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View hView = navigationView.getHeaderView(0);
+        setDrawer(hView);
     }
+
+    void setDrawer(View hView) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String uName = preferences.getString("username", "");
+        String Name = preferences.getString("name", "");
+        String picture = preferences.getString("picture", "");
+        ImageView photo = (ImageView) hView.findViewById(R.id.nav_header_profile_image);
+        TextView username = (TextView) hView.findViewById(R.id.nav_header_username);
+        TextView name = (TextView) hView.findViewById(R.id.nav_header_userid);
+        username.setText(uName);
+        name.setText(Name);
+        Glide.with(context).load(picture).centerCrop().placeholder(R.drawable.happs).crossFade().into(photo);
+    }
+
 
 
     @Override
@@ -109,9 +118,20 @@ public class EventLayoutActivity extends AppCompatActivity implements Navigation
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-         if (id == R.id.nav_manage) {
-             Intent intent = new Intent(this, SettingsActivity.class);
+         if (id == R.id.nav_logout) {
+             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+             SharedPreferences.Editor editor = preferences.edit();
+             editor.putString("user_id", "");
+             editor.putString("authentication_token", "");
+             editor.putString("picture", "");
+             editor.putString("username", "");
+             editor.putString("name", "");
+             editor.apply();
+             LoginManager.getInstance().logOut();
+             Intent intent = new Intent(this, LoginActivity.class);
+             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
              startActivity(intent);
+             finish();
          }
 
          else if (id == R.id.nav_friends){
@@ -155,8 +175,6 @@ public class EventLayoutActivity extends AppCompatActivity implements Navigation
         //noinspection SimplifiableIfStatement
         if (id == R.id.add) {
             Intent intent = new Intent(this, CameraActivity.class);
-            intent.putExtra("longitude", longitude);
-            intent.putExtra("latitude", latitude);
             startActivity(intent);
         }
 

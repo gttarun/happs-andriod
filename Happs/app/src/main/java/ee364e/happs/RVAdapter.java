@@ -76,11 +76,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.EventViewHolder>  
 
     @Override
     public void onBindViewHolder(EventViewHolder eventViewHolder, int i) {
-        URI uri = null;
-        String URL = "http://teamhapps.herokuapp.com/static/images/" + events.get(i).getName() + events.get(i).getId() + ".jpg";
         eventViewHolder.eventName.setText(events.get(i).getName());
         eventViewHolder.eventUsername.setText("created by " + events.get(i).getUsername());
-        Glide.with(context).load("https://pbs.twimg.com/profile_images/447374371917922304/P4BzupWu.jpeg").centerCrop().placeholder(R.drawable.happs).crossFade().into(eventViewHolder.eventPhoto);
+        Glide.with(context).load(events.get(i).getCover()).centerCrop().placeholder(R.drawable.happs).crossFade().into(eventViewHolder.eventPhoto);
         eventViewHolder.bind(events.get(i) , listener);
     }
     @Override

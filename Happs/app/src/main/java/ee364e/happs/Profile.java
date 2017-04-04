@@ -21,7 +21,8 @@ public class Profile {
     private String authToken;
     private ArrayList<String> friends;
     private ArrayList<Event> events;
-    private Uri profilePic;
+    private String profilePic;
+    private String status;
 
     public String getAuthToken() {
         return authToken;
@@ -31,7 +32,13 @@ public class Profile {
         this.authToken = authToken;
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
+    public String getStatus() {
+        return status;
+    }
 
     public String getUserID() {
         return userID;
@@ -53,11 +60,11 @@ public class Profile {
         this.friends = friends;
     }
 
-    public Uri getProfilePic() {
+    public String getProfilePic() {
         return profilePic;
     }
 
-    public void setProfilePic(Uri profilePic) {
+    public void setProfilePic(String profilePic) {
         this.profilePic = profilePic;
     }
 

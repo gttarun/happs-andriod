@@ -156,6 +156,7 @@
         android:background="@drawable/border"
         android:textColor="@color/regulartext"
         android:layout_width="match_parent"
+        android:text=""
         android:layout_height="wrap_content" />
 
 

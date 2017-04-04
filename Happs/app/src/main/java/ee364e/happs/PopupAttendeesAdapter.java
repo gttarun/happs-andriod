@@ -19,10 +19,12 @@ import java.util.ArrayList;
 public class PopupAttendeesAdapter  extends RecyclerView.Adapter<PopupAttendeesAdapter.MyViewHolder> {
     private Context context;
     private ArrayList<String> data;
+    private final OnItemClickListener listener;
 
-    public PopupAttendeesAdapter(Context context, ArrayList<String> data) {
+    public PopupAttendeesAdapter(Context context, ArrayList<String> data, OnItemClickListener listener) {
         this.context = context;
         this.data = data;
+        this.listener = listener;
     }
 
     @Override
@@ -35,7 +37,7 @@ public class PopupAttendeesAdapter  extends RecyclerView.Adapter<PopupAttendeesA
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         holder.textView.setText(data.get(position));
-        Glide.with(context).load("https://pbs.twimg.com/profile_images/447374371917922304/P4BzupWu.jpeg").centerCrop().placeholder(R.drawable.happs).crossFade().into(holder.imageView);
+        holder.bind(data.get(position), listener);
     }
 
     @Override
@@ -53,8 +55,20 @@ public class PopupAttendeesAdapter  extends RecyclerView.Adapter<PopupAttendeesA
         public MyViewHolder(View itemView) {
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.user_name);
-            imageView = (ImageView) itemView.findViewById(R.id.user_photo);
         }
+
+        public void bind(final String username, final OnItemClickListener listener) {
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick (View view) {
+                    listener.onItemClick(username);
+                }
+            });
+        }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(String username);
     }
 
 }

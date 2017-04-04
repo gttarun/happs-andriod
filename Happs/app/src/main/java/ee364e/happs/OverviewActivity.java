@@ -2,13 +2,23 @@ package ee364e.happs;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
@@ -29,6 +39,8 @@ public class OverviewActivity extends AppCompatActivity {
     TextView invitesEnabled;
     Event event;
     Context context;
+    String pictureURL;
+    String username;
     int id = -1;
 
 
@@ -104,21 +116,87 @@ public class OverviewActivity extends AppCompatActivity {
 
 
     public void EventSubmit(View view) {
-        String URL = "http://teamhapps.herokuapp.com/api/events/";
+        StorageReference mStorageRef  = FirebaseStorage.getInstance().getReference();
+        Uri file = event.getURI();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        username = preferences.getString("username", "anonymous");
+        StorageReference picRef = mStorageRef.child( username +"/" + file.getLastPathSegment());
+
+        picRef.putFile(file)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // Get a URL to the uploaded content
+                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                        pictureURL = downloadUrl.toString();
+                        eventPost();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Toast.makeText(context,R.string.picture_upload_error, Toast.LENGTH_LONG);
+                    }
+                });
+
+
+    }
+
+
+
+
+    public void eventPost() {
+        JsonObject json = new JsonObject();
+        json.addProperty("event_name",event.getName());
+        json.addProperty("longitude", String.valueOf(event.getLongitude()));
+        json.addProperty("latitude", String.valueOf(event.getLatitude()));
+        json.addProperty("address", event.getAddress());
+        json.addProperty("date", event.getStartYear() + "-" + event.getStartMonth() + "-" + event.getStartDay());
+        json.addProperty("start_time", event.getStartHour() + ":" + event.getStartMinute() + ":" + "00");
+        json.addProperty("end_time", event.getEndHour() + ":" + event.getEndMinute() + ":" + "00");
+        if(event.getdetails().isEmpty()) {
+            event.setdetails("details");
+        }
+        json.addProperty("description", event.getdetails());
+        json.addProperty("picture", pictureURL);
+        json.addProperty("place_name", event.getPlaceName());
+        username = "https://uthapps-backend.herokuapp.com/api/users/" + username + "/";
+
+
+        json.addProperty("host", username );
+        json.addProperty("private", !event.isPublicEvent());
+        json.addProperty("invites_enabled", event.isInvites());
+
+
+        String URL = "https://uthapps-backend.herokuapp.com/api/events/";
         Ion.with(context)
                 .load("POST", URL)
-                    .setMultipartParameter("name", event.getName())
-                    .setMultipartParameter("longitude", String.valueOf(event.getLongitude()))
-                    .setMultipartParameter("latitude", String.valueOf(event.getLatitude()))
-                    .setMultipartParameter("time", "2016-09-19T18:30:00")
-                    .setMultipartParameter("user", "http://teamhapps.herokuapp.com/api/users/Santi/")
-                    .setMultipartFile("datafile", "image/jpeg", finalFile)
-                    .asJsonObject()
-                    .setCallback(new FutureCallback< JsonObject>() {
+                .setJsonObjectBody(json)
+                .asJsonObject()
+                .setCallback(new FutureCallback< JsonObject>() {
 
                     @Override
                     public void onCompleted(Exception e, JsonObject result) {
-                        JsonObject result2 = result;
+                        String id = result.get("url").getAsString();
+                        picturePost(id);
+                    }
+                });
+    }
+
+    void picturePost(String id) {
+        JsonObject json = new JsonObject();
+        json.addProperty("username",username);
+        json.addProperty("datafile", pictureURL);
+        json.addProperty("event_id", id);
+        String URL = "https://uthapps-backend.herokuapp.com/api/photos/";
+        Ion.with(context)
+                .load("POST", URL)
+                .setJsonObjectBody(json)
+                .asJsonObject()
+                .setCallback(new FutureCallback< JsonObject>() {
+
+                    @Override
+                    public void onCompleted(Exception e, JsonObject result) {
                         Intent intent = new Intent(getApplicationContext(), EventLayoutActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -126,8 +204,8 @@ public class OverviewActivity extends AppCompatActivity {
                         finish();
                     }
                 });
-    }
 
+    }
 
     @Override
     public boolean onSupportNavigateUp(){

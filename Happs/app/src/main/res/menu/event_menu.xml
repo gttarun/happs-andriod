@@ -1,9 +1,18 @@
 <menu xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:title="next"
-        android:id="@+id/next"
+        android:id="@+id/refresh"
+        android:icon="@drawable/refresh2"
+        android:title="refresh"
+        app:showAsAction="always"
+        android:orderInCategory="0"/>
+
+
+    <item
+        android:title="camera"
+        android:id="@+id/camera"
         android:icon="@drawable/ic_camera_alt_white_18dp"
         app:showAsAction="always"
         android:orderInCategory="1"/>

@@ -1,7 +1,10 @@
 package ee364e.happs;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,7 +39,7 @@ public class FirebaseChat extends AppCompatActivity {
     private String MESSAGES_CHILD;
     private FirebaseRecyclerAdapter<Message, MessageViewHolder> mFirebaseAdapter;
     private DatabaseReference mFirebaseDatabaseReference;
-    private String username;
+    private  String username = "";
     private RecyclerView mMessageRecyclerView;
     private ImageButton mSendButton;
     private EditText mMessageEditText;
@@ -47,17 +50,21 @@ public class FirebaseChat extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firebasechat);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        username = preferences.getString("username", "");
+
 
         if(id == null) {
             MESSAGES_CHILD = "messages";
         } else {
             MESSAGES_CHILD = id;
         }
-        username = "Ali";
-
 
         mMessageRecyclerView = (RecyclerView) findViewById(R.id.message_recycler_view);
         mLinearLayoutManager = new LinearLayoutManager(this);
@@ -130,4 +137,12 @@ public class FirebaseChat extends AppCompatActivity {
 
 
     }
+
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
+    }
+
 }

@@ -158,6 +158,7 @@
             android:id="@+id/detailsOverView"
             android:textSize="18sp"
             android:padding="5dp"
+            android:text=""
             android:layout_margin="5dp"
             android:background="@drawable/border"
             android:textColor="@color/regulartext"
@@ -189,6 +190,7 @@
                 android:textColor="#FFF"
                 />
             <Button
+                android:id="@+id/invites"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight=".5"
@@ -206,6 +208,7 @@
             android:layout_height="wrap_content"
             android:background="@color/darktext"
             android:textColor="#FFF"
+            android:id="@+id/attend"
             android:text="@string/attend"
             />
 

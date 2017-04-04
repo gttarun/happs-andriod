@@ -20,15 +20,13 @@ public class FriendsListRVAdapter extends RecyclerView.Adapter<FriendsListRVAdap
 
     public static class FriendsListViewHolder extends RecyclerView.ViewHolder{
         CardView cv;
-        TextView mName;
+        TextView mStatus;
         TextView mUserName;
-        ImageView mProfilePic;
 
         FriendsListViewHolder(View itemView){
             super(itemView);
-            mName = (TextView) itemView.findViewById(R.id.Name);
-            mUserName = (TextView) itemView.findViewById(R.id.UserName);
-            mProfilePic = (ImageView) itemView.findViewById(R.id.ProfilePic);
+            mStatus = (TextView) itemView.findViewById(R.id.status);
+            mUserName = (TextView) itemView.findViewById(R.id.userName);
         }
 
         public void bind(final Profile profile, final OnItemClickListener listener){
@@ -62,12 +60,9 @@ public class FriendsListRVAdapter extends RecyclerView.Adapter<FriendsListRVAdap
 
     @Override
     public void onBindViewHolder(FriendsListViewHolder friendsListViewHolder, int i){
-        String URL;
-        friendsListViewHolder.mName.setText(profiles.get(i).getName());
+        friendsListViewHolder.mStatus.setText(profiles.get(i).getStatus());
         friendsListViewHolder.mUserName.setText(profiles.get(i).getUserName());
-        friendsListViewHolder.mProfilePic.setImageResource(R.drawable.happs);
         friendsListViewHolder.bind(profiles.get(i), listener);
-
     }
 
     @Override

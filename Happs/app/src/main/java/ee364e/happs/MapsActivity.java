@@ -2,7 +2,9 @@ package ee364e.happs;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -54,10 +57,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         @Override
         public View getInfoContents(Marker marker) {
-            int id = Integer.parseInt(marker.getTitle());
+            String id = marker.getTitle();
             Event mapEvent = null;
             for(Event event: events) {
-                if(event.getId() == id) {
+                if(event.getId().equals(id)) {
                     mapEvent = event;
                     break;
                 }
@@ -67,8 +70,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             ImageView eventPhoto = (ImageView) myContentsView.findViewById(R.id.event_photo);
             eventName.setText(mapEvent.getName());
             eventUserName.setText(mapEvent.getUsername());
-            Glide.with(context).load("https://pbs.twimg.com/profile_images/447374371917922304/P4BzupWu.jpeg").centerCrop().placeholder(R.drawable.happs).crossFade().into(eventPhoto);
-            //Glide.with(context).load(mapEvent.getURI()).centerCrop().placeholder(R.drawable.happs).crossFade().into(eventPhoto);
+            Glide.with(context).load(mapEvent.getCover()).centerCrop().placeholder(R.drawable.happs).crossFade().into(eventPhoto);
+
 
 
             return myContentsView;
@@ -87,10 +90,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        int id = Integer.parseInt(marker.getTitle());
+        String id = marker.getTitle();
         Event clickedEvent = null;
         for(Event event: events) {
-            if(event.getId() == id) {
+            if(event.getId().equals(id)) {
                 clickedEvent = event;
                 break;
             }
@@ -107,7 +110,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private GoogleMap mMap;
     Location mLastLocation;
-    private final String URL = "http://teamhapps.herokuapp.com/api/events/";
+    private final String URL = "https://uthapps-backend.herokuapp.com/api/events/";
     private JsonArray result;
     private GoogleApiClient mGoogleApiClient;
     ArrayList<Event> events;
@@ -128,8 +131,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         context = this;
-        Intent intent = getIntent();
-         result = EventBus.getDefault().removeStickyEvent(JsonArray.class);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -153,7 +154,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View hView =  navigationView.getHeaderView(0);
+        setDrawer(hView);
     }
+
+    void setDrawer(View hView) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String uName = preferences.getString("username", "");
+        String Name = preferences.getString("name", "");
+        String picture = preferences.getString("picture", "");
+        ImageView photo = (ImageView) hView.findViewById(R.id.nav_header_profile_image);
+        TextView username = (TextView) hView.findViewById(R.id.nav_header_username);
+        TextView name = (TextView) hView.findViewById(R.id.nav_header_userid);
+        username.setText(uName);
+        name.setText(Name);
+        Glide.with(context).load(picture).centerCrop().placeholder(R.drawable.happs).crossFade().into(photo);
+    }
+
 
 
     @Override
@@ -172,9 +189,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_manage) {
-            Intent intent = new Intent(this, SettingsActivity.class);
+        if (id == R.id.nav_logout) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("user_id", "");
+            editor.putString("authentication_token", "");
+            editor.putString("picture", "");
+            editor.putString("username", "");
+            editor.putString("name", "");
+            editor.apply();
+            LoginManager.getInstance().logOut();
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+            finish();
         }
 
         else if (id == R.id.nav_friends){
@@ -218,19 +246,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setOnInfoWindowClickListener(this);
         mMap.setPadding(0,200,0,230);
         mMap.setMyLocationEnabled(true);
-        try {
-            for(int i = 0 ; i < result.size(); i++) {
-                JsonElement object = result.get(i);
-                Event event = new Event(object);
-                events.add(event);
-                double latitude1 = event.getLongitude();
-                double longitude1 = event.getLatitude();
-                LatLng location = new LatLng(longitude1,latitude1);
-                mMap.addMarker(new MarkerOptions().position(location).title(String.valueOf(event.getId())));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
 
@@ -246,7 +261,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        updateLocation();
+        refresh();
     }
 
 
@@ -265,6 +280,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onResume() {
         super.onResume();
+
     }
 
 
@@ -301,15 +317,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     @Override
                     public void onCompleted(Exception e, JsonArray results) {
                         mMap.clear();
-                        for(int i = 0 ; i < result.size(); i++) {
-                            JsonElement object = result.get(i);
+                        events.clear();
+                        for(int i = 0 ; i < results.size(); i++) {
+                            JsonElement object = results.get(i);
                             try {
                                 Event event = new Event(object);
                                 events.add(event);
                                 double latitude1 = event.getLongitude();
                                 double longitude1 = event.getLatitude();
                                 LatLng location = new LatLng(longitude1,latitude1);
-                                mMap.addMarker(new MarkerOptions().position(location).title(String.valueOf(event.getId())));
+                                mMap.addMarker(new MarkerOptions().position(location).title(event.getId()));
                             } catch (JSONException e1) {
                                 e1.printStackTrace();
                             }

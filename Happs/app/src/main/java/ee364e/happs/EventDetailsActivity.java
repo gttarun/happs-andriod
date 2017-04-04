@@ -60,6 +60,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         endTime = (EditText) findViewById(R.id.EventEndTime);
         publicEvent = (Switch) findViewById(R.id.private_or_public);
         enableInvites = (CheckBox) findViewById(R.id.invites);
+
     }
 
     @Override

@@ -1,35 +1,35 @@
 {
   "project_info": {
-    "project_number": "458651361290",
-    "firebase_url": "https://happ-11de9.firebaseio.com",
-    "project_id": "happ-11de9",
-    "storage_bucket": "happ-11de9.appspot.com"
+    "project_number": "507516105868",
+    "firebase_url": "https://happs-5d497.firebaseio.com",
+    "project_id": "happs-5d497",
+    "storage_bucket": "happs-5d497.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:458651361290:android:061ad2d20ecea8bb",
+        "mobilesdk_app_id": "1:507516105868:android:061ad2d20ecea8bb",
         "android_client_info": {
           "package_name": "ee364e.happs"
         }
       },
       "oauth_client": [
         {
-          "client_id": "458651361290-a7dl668hma7pn29ovakn8ctgrtebu5o5.apps.googleusercontent.com",
+          "client_id": "507516105868-q67saun3al9295q1v0ucs4bn63c8p416.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "ee364e.happs",
-            "certificate_hash": "E9A30B5D692CCB5A0227C591A50FBB988368CCC0"
+            "certificate_hash": "e9a30b5d692ccb5a0227c591a50fbb988368ccc0"
           }
         },
         {
-          "client_id": "458651361290-d90bi2cl5rfl2b8ispd45hb080miduan.apps.googleusercontent.com",
+          "client_id": "507516105868-ch1el2lt0va9vdgsbrv7immmlotch97c.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAik8KTqvWcjiSZwI4Q4zH9gSmxSw7g7Qs"
+          "current_key": "AIzaSyB1Zpw8-jsTeAgc6QZU4_2ZQv-OUFklkaY"
         }
       ],
       "services": {
@@ -40,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "458651361290-d90bi2cl5rfl2b8ispd45hb080miduan.apps.googleusercontent.com",
+              "client_id": "507516105868-ch1el2lt0va9vdgsbrv7immmlotch97c.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

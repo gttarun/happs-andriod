@@ -36,9 +36,6 @@ public class Event {
         this.name = name;
     }
 
-    public String getTime() {
-        return time;
-    }
 
 
     public void setAddress(String address) {
@@ -72,7 +69,7 @@ public class Event {
         return details;
     }
 
-    public int getId() {
+    public String getId() {
         return this.id;
     }
 
@@ -121,6 +118,21 @@ public class Event {
         return startDay;
     }
 
+    public String getCover() {
+        return cover;
+    }
+
+    public String getDate() {
+        return date;
+    }
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
     private boolean publicEvent;
     private boolean invites;
 
@@ -128,11 +140,13 @@ public class Event {
     private double latitude;
     private String name;
     private String username;
-    private String time;
+    private String startTime;
+    private String endTime;
     private String address;
     private String placeName;
     private String details;
     private String cover;
+    private String date;
     private MyGooglePlaces place;
     private int startYear;
     private int startMonth;
@@ -142,31 +156,53 @@ public class Event {
     private int endHour;
     private int endMinute;
     private Uri uri;
-    private int id;
+    private String id;
 
 
     public Event() {
     };
 
     public Event (JSONObject object) throws JSONException {
-        id = object.getInt("id");
+        id = object.getString("url");
+        date = object.getString("date");
         longitude = Double.parseDouble(object.getString("longitude"));
         latitude = Double.parseDouble(object.getString("latitude"));
-        name = object.getString("name");
-        time = object.getString("time");
-        username = object.getString("user");
-        cover = object.getString("datafile");
+        name = object.getString("event_name");
+        startTime = object.getString("start_time");
+        endTime = object.getString("end_time");
+        address = object.getString("address");
+        details = object.getString("description");
+        String host = object.getString("host");
+        int index = host.lastIndexOf("/", host.length() - 1);
+        username = host.substring(index + 1).replace("/", "");
+        cover = object.getString("picture");
+        publicEvent = !object.getBoolean("private");
+        placeName = object.getString("place_name");
+        invites = object.getBoolean("invites_enabled");
     }
 
     public Event (JsonElement object) throws JSONException {
         try {
             JsonObject event = object.getAsJsonObject();
-            id = event.get("id").getAsInt();
+            id = event.get("url").getAsString();
             longitude = event.get("longitude").getAsDouble();
-            latitude = event.get("longitude").getAsDouble();
-            name = event.get("name").getAsString();
-            time = event.get("time").getAsString();
-            username = event.get("user").getAsString();
+            latitude = event.get("latitude").getAsDouble();
+            date = event.get("date").getAsString();
+            name = event.get("event_name").getAsString();
+            startTime = event.get("start_time").getAsString();
+            endTime = event.get("end_time").getAsString();
+            address = event.get("address").getAsString();
+            details = event.get("description").getAsString();
+            if (details == null) {
+                details = "";
+            }
+            String host = event.get("host").getAsString();
+            int index = host.lastIndexOf("/", host.length() - 2);
+            username = host.substring(index + 1).replace("/", "");
+            cover = event.get("picture").getAsString();
+            placeName = event.get("place_name").getAsString();
+            publicEvent = !event.get("private").getAsBoolean();
+            invites = event.get("invites_enabled").getAsBoolean();
         } catch (UnsupportedOperationException exception) {
         }
     }
