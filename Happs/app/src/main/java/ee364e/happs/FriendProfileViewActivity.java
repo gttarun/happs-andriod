@@ -100,7 +100,7 @@ public class FriendProfileViewActivity extends AppCompatActivity {
     }
 
     void getFriendshipStatus() {
-        String URL = "https://uthapps-backend.herokuapp.com/api/friendships/?person=" + myName + "&friend=" + username;
+        String URL = "https://uthapps-backend.herokuapp.com/api/friendships/?person=" + username + "&friend=" + myName;
         Ion.with(context)
                 .load(URL)
                 .asJsonArray()
@@ -119,7 +119,7 @@ public class FriendProfileViewActivity extends AppCompatActivity {
     }
 
     void getFriendshipStatus2() {
-        String URL = "https://uthapps-backend.herokuapp.com/api/friendships/?person=" + username + "&friend=" + myName;
+        String URL = "https://uthapps-backend.herokuapp.com/api/friendships/?person=" + myName + "&friend=" + username;
         Ion.with(context)
                 .load(URL)
                 .asJsonArray()
@@ -186,6 +186,8 @@ public class FriendProfileViewActivity extends AppCompatActivity {
 
 
     void createFriendship(String username) {
+        mProfile.setStatus(null);
+        status = null;
         String URL = "https://uthapps-backend.herokuapp.com/api/friendships/";
         JsonObject json = new JsonObject();
         json.addProperty("status", "Accepted");
@@ -205,6 +207,8 @@ public class FriendProfileViewActivity extends AppCompatActivity {
     }
 
     void deleteFriendship(String username) {
+        mProfile.setStatus(null);
+        status = null;
         String URL = "https://uthapps-backend.herokuapp.com/api/friendships/?person=" + myName + "&friend=" + username;
         Ion.with(context)
                 .load(URL)
@@ -218,7 +222,7 @@ public class FriendProfileViewActivity extends AppCompatActivity {
                             return;
                         } else {
                             JsonObject result = results.get(0).getAsJsonObject();
-                            int id = result.get("id").getAsInt();
+                            int id = result.get("friendship_id").getAsInt();
                             makeDeleteRequest(id);
                         }
                     }
@@ -226,7 +230,7 @@ public class FriendProfileViewActivity extends AppCompatActivity {
     }
 
     void makeDeleteRequest(int id ) {
-        String URL = "https://uthapps-backend.herokuapp.com/api/friendships/" + id + "/destroy";
+        String URL = "https://uthapps-backend.herokuapp.com/api/friendships/" + id + "/destroy/";
         Ion.with(context)
                 .load("DELETE", URL)
                 .asJsonObject()

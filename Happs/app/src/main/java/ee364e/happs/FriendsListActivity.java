@@ -68,6 +68,9 @@ public class FriendsListActivity extends AppCompatActivity {
 
 
     void getMyFriendRequests() {
+        requestReceived.clear();
+        requestsSent.clear();
+        friendships.clear();
         mFriends.clear();
         String URL = "https://uthapps-backend.herokuapp.com/api/friendships/?person=" + username;
         Ion.with(context)
@@ -165,4 +168,10 @@ public class FriendsListActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getMyFriendRequests();
+
+    }
 }

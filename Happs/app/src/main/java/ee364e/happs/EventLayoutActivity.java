@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -120,6 +121,7 @@ public class EventLayoutActivity extends AppCompatActivity implements Navigation
         int id = item.getItemId();
          if (id == R.id.nav_logout) {
              SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+             String username = preferences.getString("username", "");
              SharedPreferences.Editor editor = preferences.edit();
              editor.putString("user_id", "");
              editor.putString("authentication_token", "");
@@ -128,6 +130,7 @@ public class EventLayoutActivity extends AppCompatActivity implements Navigation
              editor.putString("name", "");
              editor.apply();
              LoginManager.getInstance().logOut();
+             FirebaseMessaging.getInstance().unsubscribeFromTopic(username);
              Intent intent = new Intent(this, LoginActivity.class);
              intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
              startActivity(intent);

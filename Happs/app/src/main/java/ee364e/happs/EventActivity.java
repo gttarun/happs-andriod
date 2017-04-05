@@ -459,26 +459,36 @@ public class EventActivity extends AppCompatActivity  {
                                 String attendee = attendees.get(0).getAsString().replace("\"", "");
                                 data.add(attendee);
                                 if(attendee.equals(username)){
-                                    attendID = result.get("id").getAsInt();
+                                    attendID = result.get("attendees_id").getAsInt();
                                 }
                             }
                         }
-                        if(attendID != -1) {
-                            changeAttendButton();
-                        }
+                        changeAttendButton();
+
                     }
                 });
     }
 
 
     void changeAttendButton() {
-        attend.setText("DON'T ATTEND");
-        attend.setOnClickListener( new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                deleteAttendRequest();
-            }
-        });
+        if(attendID != -1) {
+            attend.setText("DON'T ATTEND");
+            attend.setOnClickListener( new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    deleteAttendRequest();
+                }
+            });
+        } else {
+            attend.setText("ATTEND");
+            attend.setOnClickListener( new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    sendAttendRequest();
+                }
+            });
+        }
+
     }
 
     void sendAttendRequest(){
@@ -507,7 +517,17 @@ public class EventActivity extends AppCompatActivity  {
     }
 
     void deleteAttendRequest(){
-
+        String URL = "https://uthapps-backend.herokuapp.com/api/attendees/" + attendID + "/destroy/";
+        Ion.with(context)
+                .load("DELETE", URL)
+                .asJsonObject()
+                .setCallback(new FutureCallback< JsonObject>() {
+                    @Override
+                    public void onCompleted(Exception e, JsonObject result) {
+                        attendID = -1;
+                        getAttendees();
+                    }
+                });
     }
 
 }

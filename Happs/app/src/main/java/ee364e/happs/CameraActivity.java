@@ -57,8 +57,7 @@ public class CameraActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                cameraOpen();
             }
         });
         Intent intent = getIntent();

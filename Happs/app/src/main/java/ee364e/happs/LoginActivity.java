@@ -10,6 +10,7 @@ import android.os.Bundle;
 import com.facebook.*;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
@@ -173,6 +174,7 @@ public class LoginActivity extends AppCompatActivity {
                             editor.putString("username", result.get("username").getAsString());
                             editor.putString("name", result.get("name").getAsString());
                             editor.apply();
+                            FirebaseMessaging.getInstance().subscribeToTopic(result.get("username").getAsString());
                             Intent intent = new Intent(context, EventLayoutActivity.class);
                             startActivity(intent);
                             finish();
