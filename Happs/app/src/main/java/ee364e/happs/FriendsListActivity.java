@@ -54,16 +54,6 @@ public class FriendsListActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.friendsList_recycler_view);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new FriendsListRVAdapter(mFriends, new FriendsListRVAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Profile profile) {
-                Intent intent = new Intent(getApplicationContext(), FriendProfileViewActivity.class);
-                EventBus.getDefault().postSticky(profile);
-                startActivity(intent);
-            }
-        });
-        mRecyclerView.setAdapter(mAdapter);
-        getMyFriendRequests();
     }
 
 
@@ -172,6 +162,5 @@ public class FriendsListActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         getMyFriendRequests();
-
     }
 }
