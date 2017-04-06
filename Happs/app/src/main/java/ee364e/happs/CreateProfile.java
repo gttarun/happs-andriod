@@ -111,11 +111,15 @@ public class CreateProfile extends AppCompatActivity {
         String searchURL = "https://uthapps-backend.herokuapp.com/api/users/?username=" + userName;
         Ion.with(context)
                 .load("GET", searchURL)
-                .asJsonObject()
-                .setCallback(new FutureCallback<JsonObject>() {
+                .asJsonArray()
+                .setCallback(new FutureCallback<JsonArray>() {
                     @Override
-                    public void onCompleted(Exception e, JsonObject result) {
+                    public void onCompleted(Exception e, JsonArray result) {
                         if(result == null) {
+                            Toast.makeText(context, "Sorry, internal server error" , Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        if(result.size() == 0) {
                             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                             SharedPreferences.Editor editor = preferences.edit();
                             editor.putString("name", newUser.getName());
@@ -124,9 +128,8 @@ public class CreateProfile extends AppCompatActivity {
                             editor.putString("authentication_token", newUser.getAuthToken());
                             editor.apply();
                             uploadPhotoAndPost();
-
                         } else {
-                            Toast.makeText(context, "username taken, please try a different username", Toast.LENGTH_LONG);
+                            Toast.makeText(context, "username taken, please try a different username", Toast.LENGTH_LONG).show();
                         }
 
                     }

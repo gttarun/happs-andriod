@@ -57,22 +57,11 @@ public class EventLayoutActivity extends AppCompatActivity implements Navigation
         rv.setLayoutManager(lim);
         rv.setHasFixedSize(true);
         rv.setNestedScrollingEnabled(false);
-        RVAdapter adapter = new RVAdapter(events, new RVAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Event event) {
-                Intent intent = new Intent(getApplicationContext(), EventActivity.class);
-                EventBus.getDefault().postSticky(event);
-                startActivity(intent);
-            }
-        }, this);
-        rv.setAdapter(adapter);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(eventlayout, MapsActivity.class);
-                EventBus.getDefault().postSticky(result);
                 startActivity(intent);
             }
         });
@@ -145,6 +134,12 @@ public class EventLayoutActivity extends AppCompatActivity implements Navigation
 
          else if (id == R.id.nav_profile){
              Intent intent = new Intent(this, MainUserProfileActivity.class);
+             startActivity(intent);
+         }
+
+
+         else if (id == R.id.nav_events){
+             Intent intent = new Intent(this, MyEventsActivity.class);
              startActivity(intent);
          }
 

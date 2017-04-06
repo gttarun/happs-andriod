@@ -24,7 +24,6 @@
         android:minSdkVersion="8"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -33,7 +32,7 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/path" />
-            </provider>
+        </provider>
 
         <service android:name=".MyFirebaseInstanceIdService">
             <intent-filter>
@@ -55,7 +54,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
         <!--
@@ -94,10 +92,7 @@
         <activity
             android:name=".LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" >
-
-
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" />
@@ -110,13 +105,10 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".LocationActivity"
             android:label="Event Location"
             android:screenOrientation="portrait" />
-
-
         <activity
             android:name=".EventDetailsActivity"
             android:label="Event Details"
@@ -135,17 +127,17 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait" />
-        <activity android:name=".CreateProfile" >
-        </activity>
+        <activity android:name=".CreateProfile"></activity>
         <activity
             android:name=".FriendsListActivity"
             android:label="@string/title_activity_friends_list" />
-
         <activity
             android:name=".FriendProfileViewActivity"
             android:label="@string/title_activity_profile_view" />
-
-        <activity android:name=".MainUserProfileActivity"></activity>
+        <activity android:name=".MainUserProfileActivity" />
+        <activity android:name=".MyEventsActivity"
+            android:label="My Events"
+            ></activity>
     </application>
 
 </manifest>

@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -24,6 +25,19 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.async.http.body.JSONObjectBody;
+import com.koushikdutta.async.util.HashList;
+import com.koushikdutta.ion.Ion;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -72,6 +86,23 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         }
                     });
         }
+
+        /*JsonObject hey = new JsonObject();
+        hey.addProperty("title", "Invtiation for something");
+        hey.addProperty("body", "from me myself and I!");
+        JsonObject element = new JsonObject();
+        element.addProperty("to", "/topics/cykim");
+        element.add("notification", hey);
+        String token = "key=AAAAdipRNIw:APA91bFpongxwJ0ngbSAJEE7d_JFrexKa06aSVjy0jYHJ6XURU5wLgsk2mYBKMb4MM7Qzg0bL_CM0yfw2juECVvijtEakTpN0kwjmUF1XfvJPc3EQKdW9tuZD-slqQTsbXFBWIc7Q8gE";
+        Ion.with(this).load("https://fcm.googleapis.com/fcm/send").setHeader("Authorization", token).setHeader("Content-Type", "application/json").setJsonObjectBody(element)
+        .asString().setCallback(new FutureCallback< String>() {
+            @Override
+            public void onCompleted(Exception e, String result) {
+                Log.d("firebase", result);
+            }
+        });*/
+
+
         mGoogleApiClient.connect();
     }
 

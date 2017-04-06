@@ -32,6 +32,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.koushikdutta.async.future.FutureCallback;
@@ -111,7 +112,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     Location mLastLocation;
     private final String URL = "https://uthapps-backend.herokuapp.com/api/events/";
-    private JsonArray result;
     private GoogleApiClient mGoogleApiClient;
     ArrayList<Event> events;
     Context context;
@@ -189,8 +189,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+
+
         if (id == R.id.nav_logout) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            String username = preferences.getString("username", "");
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString("user_id", "");
             editor.putString("authentication_token", "");
@@ -199,20 +202,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             editor.putString("name", "");
             editor.apply();
             LoginManager.getInstance().logOut();
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(username);
             Intent intent = new Intent(this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             finish();
         }
 
+
         else if (id == R.id.nav_friends){
-            //Toast.makeText(getApplicationContext(), "you pressed friends", Toast.LENGTH_SHORT).show();
            Intent intent = new Intent(this, FriendsListActivity.class);
             startActivity(intent);
         }
 
         else if (id == R.id.nav_profile){
             Intent intent = new Intent(this, MainUserProfileActivity.class);
+            startActivity(intent);
+        }
+
+        else if (id == R.id.nav_events){
+            Intent intent = new Intent(this, MyEventsActivity.class);
             startActivity(intent);
         }
 
