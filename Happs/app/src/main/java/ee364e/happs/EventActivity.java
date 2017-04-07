@@ -113,15 +113,11 @@ public class EventActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_event);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        event = EventBus.getDefault().removeStickyEvent(Event.class);
         eventName = (TextView) findViewById(R.id.eventName);
         userName = (TextView) findViewById(R.id.userName);
         eventImage = (ImageView) findViewById(R.id.eventImage);
         eventActivity = (LinearLayout) findViewById(R.id.event_activity);
-        eventName.setText(event.getName());
-        actionBar.setTitle(event.getName());
         context = this;
-        userName.setText("Created by " + event.getUsername());
         placeName = (TextView) findViewById(R.id.placenameOverView);
         address = (TextView) findViewById(R.id.addressOverView);
         attend = (Button) findViewById(R.id.attend);
@@ -131,6 +127,11 @@ public class EventActivity extends AppCompatActivity  {
         startDate = (TextView) findViewById(R.id.dateOverView);
         privateOrPublic = (TextView) findViewById(R.id.privateOverView);
         invites = (Button) findViewById(R.id.invites);
+
+        event = EventBus.getDefault().removeStickyEvent(Event.class);
+        eventName.setText(event.getName());
+        actionBar.setTitle(event.getName());
+        userName.setText("Created by " + event.getUsername());
         placeName.setText(event.getPlaceName());
         address.setText(event.getAddress());
         details.setText(event.getdetails());
@@ -138,7 +139,6 @@ public class EventActivity extends AppCompatActivity  {
         data = new ArrayList<>();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         username = preferences.getString("username", "anonymous");
-
         attend.setOnClickListener( new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -155,17 +155,21 @@ public class EventActivity extends AppCompatActivity  {
         endTime.setText(event.getEndTime());
         id = event.getId();
 
-
-
-
-
-
-
         Glide.with(this).load(event.getCover()).placeholder(R.drawable.happs).into(eventImage);
 
         if(!event.isInvites()) {
             invites.setText("No Invites");
             invites.setClickable(false);
+        } else {
+            invites.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, InvitationsActivity.class);
+                    intent.putExtra("event_name", event.getName());
+                    intent.putExtra("event_id", event.getId());
+                    startActivity(intent);
+                }
+            });
         }
 
         detector = new GestureDetector(context, new OnSwipeListener() {

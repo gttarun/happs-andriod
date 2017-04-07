@@ -86,23 +86,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         }
                     });
         }
-
-        /*JsonObject hey = new JsonObject();
-        hey.addProperty("title", "Invtiation for something");
-        hey.addProperty("body", "from me myself and I!");
-        JsonObject element = new JsonObject();
-        element.addProperty("to", "/topics/cykim");
-        element.add("notification", hey);
-        String token = "key=AAAAdipRNIw:APA91bFpongxwJ0ngbSAJEE7d_JFrexKa06aSVjy0jYHJ6XURU5wLgsk2mYBKMb4MM7Qzg0bL_CM0yfw2juECVvijtEakTpN0kwjmUF1XfvJPc3EQKdW9tuZD-slqQTsbXFBWIc7Q8gE";
-        Ion.with(this).load("https://fcm.googleapis.com/fcm/send").setHeader("Authorization", token).setHeader("Content-Type", "application/json").setJsonObjectBody(element)
-        .asString().setCallback(new FutureCallback< String>() {
-            @Override
-            public void onCompleted(Exception e, String result) {
-                Log.d("firebase", result);
-            }
-        });*/
-
-
         mGoogleApiClient.connect();
     }
 

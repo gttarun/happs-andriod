@@ -40,6 +40,7 @@ public class EventLayoutActivity extends AppCompatActivity implements Navigation
     private final String URL = "https://uthapps-backend.herokuapp.com/api/events/";
     List<Event> events = new ArrayList<Event>();
     JsonArray result;
+    String invite;
     Context context;
 
     @Override
@@ -76,6 +77,10 @@ public class EventLayoutActivity extends AppCompatActivity implements Navigation
         navigationView.setNavigationItemSelectedListener(this);
         View hView = navigationView.getHeaderView(0);
         setDrawer(hView);
+        Intent intent = getIntent();
+        if (intent != null) {
+            invite = intent.getStringExtra("event_id");
+        }
     }
 
     void setDrawer(View hView) {
@@ -183,6 +188,15 @@ public class EventLayoutActivity extends AppCompatActivity implements Navigation
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        setIntent(intent);
+        invite = intent.getStringExtra("event_id");
+
+    }
+
     public void refresh() {
 
         Ion.with(context)
@@ -213,6 +227,17 @@ public class EventLayoutActivity extends AppCompatActivity implements Navigation
                         }, context);
                         rv.setAdapter(adapter);
 
+                        if(invite != null) {
+                            for(Event event : events){
+                                if(event.getId().equals(invite)){
+                                    Intent newIntent = new Intent(getApplicationContext(), EventActivity.class);
+                                    EventBus.getDefault().postSticky(event);
+                                    startActivity(newIntent);
+                                    invite = null;
+                                    break;
+                                }
+                            }
+                        }
                     }
                 });
 

@@ -92,7 +92,7 @@
         <activity
             android:name=".LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" />
@@ -127,7 +127,7 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait" />
-        <activity android:name=".CreateProfile"></activity>
+        <activity android:name=".CreateProfile" />
         <activity
             android:name=".FriendsListActivity"
             android:label="@string/title_activity_friends_list" />
@@ -135,9 +135,12 @@
             android:name=".FriendProfileViewActivity"
             android:label="@string/title_activity_profile_view" />
         <activity android:name=".MainUserProfileActivity" />
-        <activity android:name=".MyEventsActivity"
-            android:label="My Events"
-            ></activity>
+        <activity
+            android:name=".MyEventsActivity"
+            android:label="My Events" />
+        <activity android:name=".InvitationsActivity">
+
+        </activity>
     </application>
 
 </manifest>

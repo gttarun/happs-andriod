@@ -167,20 +167,20 @@ public class OverviewActivity extends AppCompatActivity {
         json.addProperty("private", !event.isPublicEvent());
         json.addProperty("invites_enabled", event.isInvites());
 
+            String URL = "https://uthapps-backend.herokuapp.com/api/events/";
+            Ion.with(context)
+                    .load("POST", URL)
+                    .setJsonObjectBody(json)
+                    .asJsonObject()
+                    .setCallback(new FutureCallback< JsonObject>() {
 
-        String URL = "https://uthapps-backend.herokuapp.com/api/events/";
-        Ion.with(context)
-                .load("POST", URL)
-                .setJsonObjectBody(json)
-                .asJsonObject()
-                .setCallback(new FutureCallback< JsonObject>() {
+                        @Override
+                        public void onCompleted(Exception e, JsonObject result) {
+                            String id = result.get("url").getAsString();
+                            picturePost(id);
+                        }
+                    });
 
-                    @Override
-                    public void onCompleted(Exception e, JsonObject result) {
-                        String id = result.get("url").getAsString();
-                        picturePost(id);
-                    }
-                });
     }
 
     void picturePost(String id) {
