@@ -151,7 +151,7 @@ public class InvitationsActivity extends AppCompatActivity {
 
     }
 
-    synchronized void sendInvitation(String username) {
+    synchronized void sendInvitation(final String username) {
         JsonObject hey = new JsonObject();
         hey.addProperty("title", "You are invited to " + eventName);
         hey.addProperty("body", "invitation from " + username );
@@ -164,19 +164,19 @@ public class InvitationsActivity extends AppCompatActivity {
         .asJsonObject().setCallback(new FutureCallback< JsonObject>() {
             @Override
             public void onCompleted(Exception e, JsonObject result) {
-            }
-        });
-        int index = eventID.lastIndexOf("/", eventID.length() - 2 );
-        String idNumber =eventID.substring(index +1);
-        idNumber = idNumber.replace("/" , "");
-        JsonObject invitation = new JsonObject();
-        invitation.addProperty("status", "attend");
-        invitation.addProperty("username", eventName);
-        invitation.addProperty("event_id", idNumber);
-        Ion.with(this).load("https://uthapps-backend.herokuapp.com/api/invitation").setJsonObjectBody(invitation)
-                .asJsonObject().setCallback(new FutureCallback< JsonObject>() {
-            @Override
-            public void onCompleted(Exception e, JsonObject result) {
+                int index = eventID.lastIndexOf("/", eventID.length() - 2 );
+                String idNumber =eventID.substring(index +1);
+                idNumber = idNumber.replace("/" , "");
+                JsonObject invitation = new JsonObject();
+                invitation.addProperty("status", "attend");
+                invitation.addProperty("username", username);
+                invitation.addProperty("event_id", idNumber);
+                Ion.with(context).load("POST" , "https://uthapps-backend.herokuapp.com/api/invitation/").setJsonObjectBody(invitation)
+                        .asString().setCallback(new FutureCallback< String>() {
+                    @Override
+                    public void onCompleted(Exception e, String result) {
+                    }
+                });
             }
         });
     }
