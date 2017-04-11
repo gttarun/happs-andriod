@@ -107,8 +107,8 @@ public class MyEventsActivity extends AppCompatActivity {
                                 int index = id.lastIndexOf("/", id.length() - 2 );
                                 String idNumber =id.substring(index +1);
                                 idNumber = idNumber.replace("/" , "");
-                                if(eventIDs.contains(Integer.valueOf(idNumber))) {
-                                    Event event = new Event(object);
+                                Event event = new Event(object);
+                                if(eventIDs.contains(Integer.valueOf(idNumber)) || event.getUsername().equals(username)) {
                                     events.add(event);
                                 }
                             } catch (JSONException e1) {

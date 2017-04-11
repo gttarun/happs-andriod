@@ -66,9 +66,10 @@
                 />
                  <Button
                     android:layout_width="match_parent"
-                     android:text="Get directions"
+                     android:text="@string/directions"
                      android:layout_weight=".7"
                      android:textSize="10sp"
+                     android:id="@+id/directions"
                     android:layout_height="wrap_content" />
         </LinearLayout>
         <TextView

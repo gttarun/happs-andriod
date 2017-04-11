@@ -86,6 +86,7 @@ public class EventActivity extends AppCompatActivity  {
     TextView startDate;
     TextView privateOrPublic;
     Button invites;
+    Button direction;
     ArrayList<String> pictures;
     int pictureNumber = 0;
 
@@ -127,7 +128,7 @@ public class EventActivity extends AppCompatActivity  {
         startDate = (TextView) findViewById(R.id.dateOverView);
         privateOrPublic = (TextView) findViewById(R.id.privateOverView);
         invites = (Button) findViewById(R.id.invites);
-
+        direction = (Button) findViewById(R.id.directions);
         event = EventBus.getDefault().removeStickyEvent(Event.class);
         eventName.setText(event.getName());
         actionBar.setTitle(event.getName());
@@ -171,6 +172,18 @@ public class EventActivity extends AppCompatActivity  {
                 }
             });
         }
+
+        direction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri gmmIntentUri = Uri.parse("google.navigation:q=" + event.getLatitude() + "," + event.getLongitude());
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                startActivity(mapIntent);
+            }
+
+
+        });
 
         detector = new GestureDetector(context, new OnSwipeListener() {
 

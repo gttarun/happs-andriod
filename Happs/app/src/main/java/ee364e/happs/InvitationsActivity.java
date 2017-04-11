@@ -24,6 +24,7 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class InvitationsActivity extends AppCompatActivity {
 
@@ -37,6 +38,7 @@ public class InvitationsActivity extends AppCompatActivity {
     String username;
     String eventID;
     String eventName;
+    AtomicInteger invitations = new AtomicInteger();
 
 
     @Override
@@ -137,6 +139,7 @@ public class InvitationsActivity extends AppCompatActivity {
                 progress.setVisibility(View.VISIBLE);
 
                 ArrayList<User> userList = dataAdapter.userList;
+                invitations.set(userList.size());
                 for (int i = 0; i < userList.size(); i++) {
                     User user = userList.get(i);
                     if (user.check) {
@@ -145,11 +148,11 @@ public class InvitationsActivity extends AppCompatActivity {
                 }
                 progress.setVisibility(View.INVISIBLE);
                 Toast.makeText(context, "Invitations Sent", Toast.LENGTH_LONG).show();
-                finish();
             }
         });
 
     }
+
 
     synchronized void sendInvitation(final String username) {
         JsonObject hey = new JsonObject();
@@ -175,6 +178,10 @@ public class InvitationsActivity extends AppCompatActivity {
                         .asString().setCallback(new FutureCallback< String>() {
                     @Override
                     public void onCompleted(Exception e, String result) {
+                        int number = invitations.decrementAndGet();
+                        if(number == 0) {
+                            finish();
+                        }
                     }
                 });
             }

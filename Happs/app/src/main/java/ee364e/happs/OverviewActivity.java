@@ -1,5 +1,6 @@
 package ee364e.happs;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,6 +42,7 @@ public class OverviewActivity extends AppCompatActivity {
     Context context;
     String pictureURL;
     String username;
+    ProgressDialog dialog;
     int id = -1;
 
 
@@ -116,6 +118,8 @@ public class OverviewActivity extends AppCompatActivity {
 
 
     public void EventSubmit(View view) {
+        dialog = ProgressDialog.show(this, "",
+                "Please wait for few seconds...", true);
         StorageReference mStorageRef  = FirebaseStorage.getInstance().getReference();
         Uri file = event.getURI();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -135,7 +139,8 @@ public class OverviewActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
-                        Toast.makeText(context,R.string.picture_upload_error, Toast.LENGTH_LONG);
+                        dialog.dismiss();
+                        Toast.makeText(context,R.string.picture_upload_error, Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -200,6 +205,7 @@ public class OverviewActivity extends AppCompatActivity {
                         Intent intent = new Intent(getApplicationContext(), EventLayoutActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        dialog.dismiss();
                         startActivity(intent);
                         finish();
                     }

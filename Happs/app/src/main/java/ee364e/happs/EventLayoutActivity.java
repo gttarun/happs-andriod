@@ -39,14 +39,16 @@ public class EventLayoutActivity extends AppCompatActivity implements Navigation
 
     private final String URL = "https://uthapps-backend.herokuapp.com/api/events/";
     List<Event> events = new ArrayList<Event>();
+    List<String> invitations = new ArrayList();
     JsonArray result;
     String invite;
     Context context;
+    String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String username = preferences.getString("username", "");
+        username = preferences.getString("username", "");
         super.onCreate(savedInstanceState);
         final EventLayoutActivity eventlayout = this;
         context = this;
@@ -198,7 +200,30 @@ public class EventLayoutActivity extends AppCompatActivity implements Navigation
     }
 
     public void refresh() {
+        invitations.clear();
+        String URLInvites = "https://uthapps-backend.herokuapp.com/api/invitation/?username=" + username;
+        Ion.with(context)
+                .load(URLInvites)
+                .asJsonArray()
+                .setCallback(new FutureCallback<JsonArray>() {
+                    @Override
+                    public void onCompleted(Exception e, JsonArray results) {
+                        if(results == null) {
+                            refreshP2();
+                        } else if (results.size() ==0) {
+                            refreshP2();
+                        } else {
+                            for(int i = 0; i < results.size(); i++) {
+                                invitations.add(results.get(i).getAsJsonObject().get("event_id").getAsString());
+                            }
+                            refreshP2();
+                        }
+                    }
+                });
 
+    }
+
+    public void refreshP2() {
         Ion.with(context)
                 .load(URL)
                 .asJsonArray()
@@ -207,15 +232,25 @@ public class EventLayoutActivity extends AppCompatActivity implements Navigation
                     public void onCompleted(Exception e, JsonArray results) {
                         result = results;
                         events = new ArrayList<Event>();
-                            for(int i = 0 ; i < result.size(); i++) {
-                                JsonElement object = result.get(i);
-                                try {
-                                    Event event = new Event(object);
+                        for(int i = 0 ; i < result.size(); i++) {
+                            JsonElement object = result.get(i);
+                            try {
+                                Event event = new Event(object);
+                                if(event.isPublicEvent()) {
                                     events.add(event);
-                                } catch (JSONException e1) {
-                                    e1.printStackTrace();
+                                } else {
+                                    String id = event.getId();
+                                    int index = id.lastIndexOf("/", id.length() - 2 );
+                                    String idNumber =id.substring(index +1);
+                                    idNumber = idNumber.replace("/" , "");
+                                    if(invitations.contains(idNumber) || username.equals(event.getUsername())) {
+                                        events.add(event);
+                                    }
                                 }
+                            } catch (JSONException e1) {
+                                e1.printStackTrace();
                             }
+                        }
                         RecyclerView rv = (RecyclerView)findViewById(R.id.rv);
                         RVAdapter adapter = new RVAdapter(events, new RVAdapter.OnItemClickListener() {
                             @Override
@@ -240,6 +275,5 @@ public class EventLayoutActivity extends AppCompatActivity implements Navigation
                         }
                     }
                 });
-
     }
 }

@@ -11,6 +11,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -30,9 +34,11 @@ public class FriendsListActivity extends AppCompatActivity {
 
     String username;
     Context context;
+    EditText search;
     ArrayList<String> requestReceived = new ArrayList<String>();
     ArrayList<String> requestsSent = new ArrayList<String>();
     ArrayList<String> friendships = new ArrayList<String>();
+    ArrayList<Profile> searchResult = new ArrayList<Profile>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +51,18 @@ public class FriendsListActivity extends AppCompatActivity {
         username = preferences.getString("username", "");
         context = this;
 
-
+        search = (EditText) findViewById(R.id.search);
+        search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    String name = search.getText().toString();
+                    performSearch(name);
+                    return true;
+                }
+                return false;
+            }
+        });
 
         //replace following code to pull friends list from server
         mFriends = new ArrayList<Profile>();
@@ -54,6 +71,43 @@ public class FriendsListActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.friendsList_recycler_view);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
+    }
+
+
+    public void performSearch(String name){
+        searchResult.clear();
+        String URL = "http://uthapps-backend.herokuapp.com/api/users/?username=" + name;
+        Ion.with(context)
+                .load(URL)
+                .asJsonArray()
+                .setCallback(new FutureCallback<JsonArray>() {
+                    @Override
+                    public void onCompleted(Exception e, JsonArray results) {
+                        if(results == null || results.size() == 0) {
+                            mAdapter = new FriendListSearchAdapter(searchResult, new FriendListSearchAdapter.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(Profile profile) {
+                                }
+                            }, context);
+                            mRecyclerView.setAdapter(mAdapter);
+                        } else if(results.size() != 0) {
+                            JsonObject object = results.get(0).getAsJsonObject();
+                            Profile profile = new Profile();
+                            profile.setUserName(object.get("username").getAsString());
+                            profile.setProfilePic(object.get("picture").getAsString());
+                            searchResult.add(profile);
+                            mAdapter = new FriendListSearchAdapter(searchResult, new FriendListSearchAdapter.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(Profile profile) {
+                                    Intent intent = new Intent(getApplicationContext(), FriendProfileViewActivity.class);
+                                    intent.putExtra("username", profile.getUserName());
+                                    startActivity(intent);
+                                }
+                            }, context);
+                            mRecyclerView.setAdapter(mAdapter);
+                        }
+                    }
+                });
     }
 
 

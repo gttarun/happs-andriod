@@ -42,6 +42,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener,
         GoogleMap.OnInfoWindowClickListener {
@@ -114,14 +115,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private final String URL = "https://uthapps-backend.herokuapp.com/api/events/";
     private GoogleApiClient mGoogleApiClient;
     ArrayList<Event> events;
+    List<String> invitations = new ArrayList();
     Context context;
-
+    String username;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        username = preferences.getString("username", "");
+
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -317,7 +322,33 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return super.onOptionsItemSelected(item);
     }
 
+
     public void refresh() {
+        invitations.clear();
+        String URLInvites = "https://uthapps-backend.herokuapp.com/api/invitation/?username=" + username;
+        Ion.with(context)
+                .load(URLInvites)
+                .asJsonArray()
+                .setCallback(new FutureCallback<JsonArray>() {
+                    @Override
+                    public void onCompleted(Exception e, JsonArray results) {
+                        if(results == null) {
+                            refreshP2();
+                        } else if (results.size() ==0) {
+                            refreshP2();
+                        } else {
+                            for(int i = 0; i < results.size(); i++) {
+                                invitations.add(results.get(i).getAsJsonObject().get("event_id").getAsString());
+                            }
+                            refreshP2();
+                        }
+                    }
+                });
+
+    }
+
+
+    public void refreshP2() {
         updateLocation();
         Ion.with(context)
                 .load(URL)
@@ -331,7 +362,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             JsonElement object = results.get(i);
                             try {
                                 Event event = new Event(object);
-                                events.add(event);
+                                if(event.isPublicEvent()) {
+                                    events.add(event);
+                                } else {
+                                    String id = event.getId();
+                                    int index = id.lastIndexOf("/", id.length() - 2 );
+                                    String idNumber =id.substring(index +1);
+                                    idNumber = idNumber.replace("/" , "");
+                                    if(invitations.contains(idNumber) || username.equals(event.getUsername())) {
+                                        events.add(event);
+                                    }
+                                }
                                 double latitude1 = event.getLongitude();
                                 double longitude1 = event.getLatitude();
                                 LatLng location = new LatLng(longitude1,latitude1);

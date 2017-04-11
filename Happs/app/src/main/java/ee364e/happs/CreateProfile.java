@@ -1,5 +1,6 @@
 package ee364e.happs;
 
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 import com.google.android.gms.identity.intents.AddressConstants;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -71,6 +73,7 @@ public class CreateProfile extends AppCompatActivity {
     private EditText description;
     private ImageView profilepic;
     private Button submitButton;
+    ProgressDialog dialog;
     String pictureURL;
     Uri file;
 
@@ -102,6 +105,8 @@ public class CreateProfile extends AppCompatActivity {
     }
 
        public void onClickSubmit(View view) /*throws Exception*/{
+           dialog = ProgressDialog.show(this, "",
+                   "Please wait for few seconds...", true);
            newUser.setName(name.getText().toString());
            newUser.setUserName(username.getText().toString());
            isUniqueUserName(newUser.getUserName());
@@ -110,16 +115,21 @@ public class CreateProfile extends AppCompatActivity {
     public void isUniqueUserName(String userName) {
         String searchURL = "https://uthapps-backend.herokuapp.com/api/users/?username=" + userName;
         Ion.with(context)
-                .load("GET", searchURL)
+                .load(searchURL)
                 .asJsonArray()
                 .setCallback(new FutureCallback<JsonArray>() {
                     @Override
                     public void onCompleted(Exception e, JsonArray result) {
                         if(result == null) {
-                            Toast.makeText(context, "Sorry, internal server error" , Toast.LENGTH_LONG).show();
-                            return;
-                        }
-                        if(result.size() == 0) {
+                            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putString("name", newUser.getName());
+                            editor.putString("username", newUser.getUserName());
+                            editor.putString("user_id", newUser.getUserID());
+                            editor.putString("authentication_token", newUser.getAuthToken());
+                            editor.apply();
+                            uploadPhotoAndPost();
+                        } else if(result.size() == 0) {
                             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                             SharedPreferences.Editor editor = preferences.edit();
                             editor.putString("name", newUser.getName());
@@ -129,6 +139,7 @@ public class CreateProfile extends AppCompatActivity {
                             editor.apply();
                             uploadPhotoAndPost();
                         } else {
+                            dialog.dismiss();
                             Toast.makeText(context, "username taken, please try a different username", Toast.LENGTH_LONG).show();
                         }
 
@@ -155,7 +166,8 @@ public class CreateProfile extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
-                        Toast.makeText(context,R.string.picture_upload_error, Toast.LENGTH_LONG);
+                        dialog.dismiss();
+                        Toast.makeText(context,R.string.picture_upload_error, Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -187,10 +199,13 @@ public class CreateProfile extends AppCompatActivity {
                             editor.putString("authentication_token", newUser.getAuthToken());
                             editor.putString("picture", pictureURL);
                             editor.apply();
+                            FirebaseMessaging.getInstance().subscribeToTopic(newUser.getUserName());
+                            dialog.dismiss();
                             Intent intent = new Intent (context, EventLayoutActivity.class);
                             startActivity(intent);
                             finish();
                         }
+                        dialog.dismiss();
                     }
                 });
     }

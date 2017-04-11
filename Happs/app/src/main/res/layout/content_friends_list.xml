@@ -13,10 +13,19 @@
     tools:context="ee364e.happs.FriendsListActivity"
     tools:showIn="@layout/activity_friends_list">
 
+    <EditText
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/search"
+        android:hint="search users"
+        android:imeOptions="actionSearch"
+        android:inputType="text" />
+
     <android.support.v7.widget.RecyclerView
+        android:layout_below="@+id/search"
         android:id="@+id/friendsList_recycler_view"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>
